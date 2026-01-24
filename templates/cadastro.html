@@ -31,33 +31,32 @@
 
                     <h4 class="text-center text-roxo mb-4"><i class="bi bi-door-open"></i>Criar Conta</h4>
 
-                    <div class="mb-3">
-                        <label class="form-label">Nome completo</label>
-                        <input type="text" class="form-control" placeholder="Digite seu nome">
-                    </div>
+                    <form method="POST" action="{{ url_for('cadastro.cadastro') }}">
+                        <div class="mb-3">
+                                <label class="form-label">Nome completo</label>
+                                <input type="text" name="nome" class="form-control" placeholder="Digite seu nome">
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" placeholder="Digite seu email">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Senha</label>
-                        <input type="password" class="form-control" placeholder="Crie uma senha">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Tipo de Conta</label>
-                        <select class="form-select">
-                            <option selected disabled>Selecione...</option>
-                            <option>Aluno</option>
-                            <option>Professor</option>
-                        </select>
-                    </div>
-
-                    <div class="d-grid">
-                        <button class="btn btn-roxo">Cadastrar</button>
-                    </div>
+                        <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control" placeholder="Digite seu email">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Senha</label>
+                                    <input type="password" name="senha" class="form-control" placeholder="Crie uma senha">
+                                </div>
+                                <div class="mb-3">
+                                        <label class="form-label">Tipo de Conta</label>
+                                        <select name="tipo" class="form-select">
+                                            <option selected disabled>Selecione...</option>
+                                            <option value="aluno">Aluno</option>
+                                            <option value="professor">Professor</option>
+                                        </select>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-roxo">Cadastrar</button>
+                        </div>
+                    </form>
 
                     <div class="text-center mt-3">
                         <small>Já tem conta?<a href="{{ url_for('login.login') }}" class="text-primary text-decoration-none">Entrar</a></small>
@@ -67,11 +66,5 @@
             </div>
         </div>
     </div>
-<script>
-    const socket = io();
-    socket.on("connect", () => {
-        console.log("Conectado ao servidor via Socket.IO");
-    });
-</script>
 </body>
 </html>

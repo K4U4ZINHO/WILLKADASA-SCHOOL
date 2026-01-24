@@ -8,6 +8,8 @@ from routes.cadastro import cadastro_bp
 def create_app():
 
     app = Flask(__name__)
+    app.secret_key = app.secret_key = os.urandom(24)
+    
 
     #inicializar base de dados 
     # willkadasa_db.init_app(app)
