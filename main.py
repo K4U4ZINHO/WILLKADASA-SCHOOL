@@ -15,6 +15,7 @@ def create_app():
     # registra blueprints
     app.register_blueprint(login_bp)
     app.register_blueprint(cadastro_bp)
+
     # inicializa socketio
     socketio.init_app(app)
 
@@ -23,4 +24,4 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
+    socketio.run(app, host="0.0.0.0", port=500, debug=True)

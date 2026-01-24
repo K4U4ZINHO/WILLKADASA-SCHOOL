@@ -1,0 +1,1 @@
+C:\Python313\python.exe "c:/Users/k4u4n/OneDrive - AEBJC/Escola/PSI/12/Breno/Modulo_17/Projeto_modulo17/main.py"

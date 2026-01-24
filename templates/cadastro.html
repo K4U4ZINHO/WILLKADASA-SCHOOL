@@ -67,6 +67,11 @@
             </div>
         </div>
     </div>
-
+<script>
+    const socket = io();
+    socket.on("connect", () => {
+        console.log("Conectado ao servidor via Socket.IO");
+    });
+</script>
 </body>
 </html>

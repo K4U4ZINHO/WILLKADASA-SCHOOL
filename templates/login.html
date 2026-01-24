@@ -32,7 +32,8 @@
 
                     <div class="mb-3">
                         <label class="form-label">Usuário</label>
-                        <input type="text" class="form-control" placeholder="Digite seu usuário">
+                        <!--Input Email para LOGIN-->
+                        <input type="text" class="form-control" placeholder="Digite seu email">
                     </div>
 
                     <div class="mb-3">
@@ -45,8 +46,10 @@
                     </div>
 
                     <div class="text-center mt-3">
+                        <!--Redireciona Para A Página De cadastro.html-->
                         <small>Não tem uma conta?<a href="{{ url_for('cadastro.cadastro') }}" class="text-primary text-decoration-none">Cadastrar-se</a></small>
-
+                        <!--Redireciona Para A Pagina De recuperar_senha.html-->
+                        <small>Esqueceu a senha?<a href="{{ url_for('cadastro.recuperar') }}" class="text-primary text-decoration-none">Recuperar Senha</a></small>
                     </div>
 
                     <div class="text-center mt-3">
