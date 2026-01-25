@@ -17,54 +17,217 @@
 
 </head>
 <body>
-
     <nav class="navbar bg-roxo navbar-dark">
         <div class="container">
             <span class="navbar-brand mb-0 h1">WILLKADASA — Cadastro</span>
         </div>
     </nav>
 
-    <div class="container d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, msg in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show text-center py-2" role="alert">
+                        {{ msg }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 76.5vh; padding-top: 50px;">
         <div class="col-md-5">
             <div class="card shadow-sm">
                 <div class="card-body p-4">
 
                     <h4 class="text-center text-roxo mb-4"><i class="bi bi-door-open"></i>Criar Conta</h4>
 
-                    <form method="POST" action="{{ url_for('cadastro.cadastro') }}">
+                    <form method="POST" action="{{ url_for('cadastro.cadastro') }}" id="formCadastro">
                         <div class="mb-3">
-                                <label class="form-label">Nome completo</label>
-                                <input type="text" name="nome" class="form-control" placeholder="Digite seu nome">
+                            <label class="form-label">Tipo de Conta</label>
+                            <select name="tipo" id="tipoConta" class="form-select" required>
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="aluno">Aluno</option>
+                                <option value="professor">Professor</option>
+                            </select>
                         </div>
 
-                        <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control" placeholder="Digite seu email">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Senha</label>
-                                    <input type="password" name="senha" class="form-control" placeholder="Crie uma senha">
-                                </div>
-                                <div class="mb-3">
-                                        <label class="form-label">Tipo de Conta</label>
-                                        <select name="tipo" class="form-select">
-                                            <option selected disabled>Selecione...</option>
-                                            <option value="aluno">Aluno</option>
-                                            <option value="professor">Professor</option>
-                                        </select>
-                                </div>
-                                <div class="d-grid">
-                                    <button class="btn btn-roxo">Cadastrar</button>
+                        <!-- CAMPOS SENHA PARA LIBERAR CAMPO PROFESSOR -->
+                        <div id="camposProfessorSenha" class="d-none"><!--Depois tirar o "display:none"-->
+                            <div class="mb-3">
+                            <label class="form-label">Senha(<span class="text-danger">Para Liberar O Acesso</span>)</label>
+                            <input type="password" name="senha_secreta_prof" class="form-control" placeholder="Digite a senha secreta">
+                            </div>
+
                         </div>
-                    </form>
+
+                        <!-- CAMPOS PROFESSOR -->
+                        <div id="camposProfessorDados" class="d-none"><!--Depois tirar o "display:none"-->
+                            <div class="mb-3">
+                            <label class="form-label">Nome completo</label>
+                            <input type="text" name="nome_prof" class="form-control" placeholder="Digite seu nome">
+                            </div>
+
+                            <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email_prof" class="form-control" placeholder="Digite seu email">
+                            </div>
+
+                            <div class="mb-3">
+                            <label class="form-label">Senha</label>
+                            <input type="password" name="senha_prof" class="form-control" placeholder="Crie uma senha">
+                            </div>
+                        </div>
+
+                        <!-- CAMPOS ALUNO -->
+                        <div id="camposAluno" class="d-none">
+                            <div class="mb-3">
+                                <label class="form-label">Nome completo</label>
+                                <input type="text" name="nome_aluno" class="form-control" placeholder="Digite seu nome" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Usuário
+                                    <span class="text-danger">
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                        Guarde este usuário. Ele será usado para fazer login.
+                                    </span>
+                                </label>
+
+                                <div class="form-control bg-light" id="usuarioGeradoDisplay">
+                                    {{ proximo_usuario }}
+                                </div>
+                            </div>
+                            
+
+                            <div class="mb-3">
+                                <label class="form-label">Senha</label>
+                                <input type="password" name="senha_aluno" class="form-control" placeholder="Crie uma senha" required>
+                            </div>
+                        </div>
+                        
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-roxo">Cadastrar</button>
+                        </div>
+                        </form>
 
                     <div class="text-center mt-3">
-                        <small>Já tem conta?<a href="{{ url_for('login.login') }}" class="text-primary text-decoration-none">Entrar</a></small>
+                        <small>DEPOIS VOU TIRAR<br>
+                            <a href="{{ url_for('professor.dashboard_professor') }}" class="text-primary text-decoration-none">PROFESSOR</a><br>
+                            <a href="{{ url_for('login.login_aluno') }}" class="text-primary text-decoration-none">ALUNO</a></small>
                     </div>
 
+                    <div class="text-center mt-3">
+                        <small>Já tem conta?<a href="{{ url_for('home.home') }}" class="text-primary text-decoration-none">Entrar</a></small>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <footer class="text-center py-3 mt-5 border-top footer-roxo">
+    <div>
+        © <span id="ano"></span> WILLKADASA •
+        <a
+            href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL"
+            target="_blank"
+            class="text-decoration-none"
+        >
+        <i class="bi bi-github"></i> GitHub
+        </a>
+            •
+    </div>
+    </footer>
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const tipoConta = document.getElementById("tipoConta");
+    const camposAluno = document.getElementById("camposAluno");
+    const camposProfessorSenha = document.getElementById("camposProfessorSenha");
+    const camposProfessorDados = document.getElementById("camposProfessorDados");
+
+    if (!tipoConta || !camposAluno || !camposProfessorSenha || !camposProfessorDados) {
+        console.warn("Algum elemento não foi encontrado. JS não será executado.");
+        return;
+    }
+
+    function setGrupoAtivo(grupoAtivo) {
+        const inputsAluno = camposAluno.querySelectorAll("input");
+        const inputsProf = document
+            .querySelectorAll("#camposProfessorSenha input, #camposProfessorDados input");
+
+        if (grupoAtivo === "aluno") {
+            // mostra aluno
+            camposAluno.classList.remove("d-none");
+            // esconde professor
+            camposProfessorSenha.classList.add("d-none");
+            camposProfessorDados.classList.add("d-none");
+
+            // habilita aluno
+            inputsAluno.forEach(i => {
+                i.disabled = false;
+                i.required = true;
+            });
+            // desabilita professor
+            inputsProf.forEach(i => {
+                i.disabled = true;
+                i.required = false;
+            });
+        }
+
+        else if (grupoAtivo === "professor") {
+            // esconde aluno
+            camposAluno.classList.add("d-none");
+            // mostra professor
+            camposProfessorSenha.classList.remove("d-none");
+            camposProfessorDados.classList.remove("d-none");
+
+            // desabilita aluno
+            inputsAluno.forEach(i => {
+                i.disabled = true;
+                i.required = false;
+            });
+            // habilita professor
+            inputsProf.forEach(i => {
+                i.disabled = false;
+                i.required = true;
+            });
+        }
+
+        else {
+            // nenhum selecionado
+            camposAluno.classList.add("d-none");
+            camposProfessorSenha.classList.add("d-none");
+            camposProfessorDados.classList.add("d-none");
+
+            inputsAluno.forEach(i => {
+                i.disabled = true;
+                i.required = false;
+            });
+            inputsProf.forEach(i => {
+                i.disabled = true;
+                i.required = false;
+            });
+        }
+    }
+
+    // estado inicial
+    setGrupoAtivo(null);
+
+    tipoConta.addEventListener("change", function () {
+        if (this.value === "aluno") {
+            setGrupoAtivo("aluno");
+        } else if (this.value === "professor") {
+            setGrupoAtivo("professor");
+        } else {
+            setGrupoAtivo(null);
+        }
+    });
+});
+</script>
 </body>
 </html>

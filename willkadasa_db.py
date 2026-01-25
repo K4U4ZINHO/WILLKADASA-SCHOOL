@@ -13,10 +13,12 @@ cursor.execute("""
 CREATE TABLE IF NOT EXISTS email (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL,
+    senha_hash TEXT NOT NULL,
+    tipo TEXT NOT NULL,
     email_principal TEXT UNIQUE NOT NULL,
-    email_recuperacao TEXT,
-    senha_hash TEXT NOT NULL
-);
+    email_recuperacao TEXT   
+    
+)
 """)
 
 # Tabela de disciplinas
@@ -24,18 +26,58 @@ cursor.execute("""
 CREATE TABLE IF NOT EXISTS disciplinas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL
-);
+)
 """)
 
-# Tabela de professores (sem FKs por enquanto)
+# Tabela de professores (Verificar se as chaves estrangeiras estão a funcionar)
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS professores (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL,
     idade INTEGER,
     numero TEXT
-);
+    email_id INTEGER UNIQUE, 
+    FOREIGN KEY (email_id) REFERENCES email(id) ON DELETE SET NULL 
+)
 """)
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS questoes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    texto TEXT NOT NULL   
+    disciplina_id INTEGER,
+    FOREIGN KEY (disciplina_id) REFERENCES disciplina(id) ON DELETE SET NULL  
+)          
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS alunos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    skwd_aluno TEXT UNIQUE NOT NULL,
+    turma_id TEXT NOT NULL,
+    nome TEXT NOT NULL,        
+    email_id INTEGER UNIQUE, 
+    FOREIGN KEY (turma_id) REFERENCES turmas(id) ON DELETE CASCADE,
+    FOREIGN KEY (email_id) REFERENCES email(id) ON DELETE SET NULL
+                      
+              
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS turmas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    ano INTEGER NOT NULL,
+    curso TEXT NOT NULL                  
+)
+""")
+
+#cursorexames
+#cursorsubmissão
+#cursorrespostas
+#melhorar a base das questões(adicionar ordem e pontuação)
+
 
 conn.commit()
 conn.close()

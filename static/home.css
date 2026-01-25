@@ -1,0 +1,71 @@
+:root {
+    --roxo: #6a0dad;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #f5f5f5;
+}
+
+.bg-roxo {
+    background-color: var(--roxo) !important;
+}
+
+.text-roxo {
+    color: var(--roxo);
+}
+
+.logo-willkadasa {
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--roxo);
+}
+
+/* Cards de login */
+.card-login {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card-login:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+/* Footer roxo */
+.footer-roxo {
+    background-color: var(--roxo);
+    color: white;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+}
+.footer-roxo a {
+    color: white;
+}
+.footer-roxo a:hover {
+    color: #e0d2ff;
+}
+
+.footer-roxo {
+    background-color: var(--roxo) !important;
+    color: white !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    z-index: 1000;
+}
+
+.footer-roxo a {
+    color: white !important;
+}
+
+.footer-roxo a:hover {
+    color: #e0d2ff !important;
+}
+
+.card-login {
+    height: 250px;
+}

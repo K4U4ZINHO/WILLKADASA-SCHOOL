@@ -23,3 +23,17 @@ body {
 .btn-roxo:hover {
     background-color: #5a0bb5;
 }
+
+.footer-roxo {
+    background-color: var(--roxo) !important;
+    color: white !important;
+    margin-bottom: -70;
+}
+
+.footer-roxo a {
+    color: white !important;
+}
+
+.footer-roxo a:hover {
+    color: #e0d2ff !important;
+}

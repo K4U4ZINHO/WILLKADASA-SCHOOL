@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WILLKADASA - Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='home.css') }}"
+    />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar bg-roxo navbar-dark">
+      <div class="container">
+        <span class="navbar-brand mb-0 h1">WILLKADASA</span>
+      </div>
+    </nav>
+
+    <!-- Logo grande -->
+    <div class="text-center my-5">
+      <h1 class="display-3 logo-willkadasa">WILLKADASA</h1>
+      <p class="lead text-roxo">Escolha o tipo de login para continuar</p>
+    </div>
+
+    <!-- Cards de escolha -->
+    <div class="container d-flex justify-content-center">
+      <div class="row g-4">
+        <!-- Card Professor -->
+        <div class="col-md-6">
+          <a
+            href="{{ url_for('login.login_professor') }}"
+            class="text-decoration-none"
+          >
+            <div class="card shadow-lg border-0 card-login hover-card">
+              <div class="card-body text-center py-5">
+                <i class="bi bi-person-workspace fs-1 text-roxo mb-3"></i>
+                <h3 class="card-title text-roxo mb-2">Professor</h3>
+                <p class="card-text text-muted">
+                  Acesse sua conta de professor para criar testes e gerenciar turmas.
+                </p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Card Aluno -->
+        <div class="col-md-6">
+          <a
+            href="{{ url_for('login.login_aluno') }}"
+            class="text-decoration-none"
+          >
+            <div class="card shadow-lg border-0 card-login hover-card">
+              <div class="card-body text-center py-5">
+                <i class="bi bi-person fs-1 text-roxo mb-3"></i>
+                <h3 class="card-title text-roxo mb-2">Aluno</h3>
+                <p class="card-text text-muted">
+                  Acesse sua conta de aluno para ver testes e acompanhar seus
+                  resultados.
+                </p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <footer class="text-center py-3 mt-5 border-top footer-roxo">
+      <div>
+        © <span id="ano"></span> WILLKADASA •
+        <a
+          href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL"
+          target="_blank"
+          class="text-decoration-none"
+        >
+          <i class="bi bi-github"></i> GitHub
+        </a>
+        •
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Coloca o ano atual no footer
+      document.getElementById("ano").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

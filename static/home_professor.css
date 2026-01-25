@@ -24,22 +24,18 @@ body {
     background-color: #5a0bb5;
 }
 
-.logo-willkadasa {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    font-size: 3rem;  
-    letter-spacing: 4px;   
-    color: var(--roxo);
-    text-align: center;
-    margin-top: 20px;
-    margin-bottom: -70px;
-}
-
 .footer-roxo {
     background-color: var(--roxo) !important;
     color: white !important;
-    margin-bottom: -70;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    z-index: 1000;
 }
+
 
 .footer-roxo a {
     color: white !important;
@@ -48,4 +44,3 @@ body {
 .footer-roxo a:hover {
     color: #e0d2ff !important;
 }
-
