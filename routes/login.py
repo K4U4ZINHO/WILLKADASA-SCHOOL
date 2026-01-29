@@ -56,13 +56,13 @@ def login_professor():
 @login_bp.route("/aluno", methods=["GET", "POST"])
 def login_aluno():
     if request.method == "POST":
-        skud = request.form.get("skud")
+        skwd = request.form.get("skwd")
         senha = request.form.get("senha")
 
-        usuario = buscar_usuario(skud)
+        usuario = buscar_usuario(skwd)
 
         if not usuario or criar_hash_senha(senha) != usuario[3] or usuario[4] != "aluno":
-            flash("SKUD ou senha incorretos.", "danger")
+            flash("SKWD ou senha incorretos.", "danger")
             return redirect(url_for("login.login_aluno"))
 
         session["usuario_id"] = usuario[0]
