@@ -32,7 +32,7 @@
     <nav class="navbar bg-roxo navbar-dark">
       <div class="container d-flex align-items-center gap-2">
 
-        <a class="text-white fs-4" href="{{ url_for('login.login_professor') }}" role="button">
+        <a class="text-white fs-4" href="{{ url_for('home.home') }}" role="button">
           <i class="bi bi-arrow-return-left"></i>
         </a>
         
@@ -75,7 +75,7 @@
             <div class="mb-3">
               <form
                 method="POST"
-                action="{{ url_for('login.login_aluno') }}"
+                action="{{ url_for('login.login_professor') }}"
               >
                 <div class="mb-3">
                   <label class="form-label">Email</label>
