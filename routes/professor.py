@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template
+import sqlite3
+
 
 professor_bp = Blueprint("professor", __name__, url_prefix="/professor")
 
@@ -8,5 +10,24 @@ def dashboard_professor():
 
 @professor_bp.route("/criar_teste")
 def criar_teste():
-    return render_template("criar_teste.html")
+    
+    with sqlite3.connect("willkadasa.db", timeout=5) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT MAX(CAST(email_id AS INTEGER)) FROM email WHERE tipo = 'professor'")
+        nome_professor = cursor.fetchone()[0]
+
+    return render_template("criar_teste.html", nome_professor=nome_professor)
+
+
+@professor_bp.route("/criar_turma")
+def criar_turma():
+    return render_template("criar_turma.html")
+
+@professor_bp.route("/config_conta")
+def config_conta():
+    return render_template("config_conta_professor.html")
+
+@professor_bp.route("/ver_turma")
+def ver_turma():
+    return render_template("ver_turma.html")
 
