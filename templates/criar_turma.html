@@ -1,121 +1,192 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>WILLKADASA - Criar Turma</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
 
     <!-- Fonte -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- CSS do projeto -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='criar_turma.css') }}">
-</head>
-<body>
-
-<nav class="navbar bg-roxo navbar-dark">
-    <div class="container d-flex align-items-center gap-3">
-        <a class="text-white fs-4" href="{{ url_for('professor.dashboard_professor') }}">
-            <i class="bi bi-arrow-return-left"></i>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='criar_turma.css') }}"
+    />
+  </head>
+  <body>
+    <nav class="navbar bg-roxo navbar-dark">
+      <div class="container d-flex justify-content-between align-items-center">
+        <!-- voltar a página home_professor.html -->
+        <a
+          class="text-white fs-4"
+          href="{{ url_for('professor.dashboard_professor') }}"
+          role="button"
+        >
+          <i class="bi bi-arrow-return-left"></i>
         </a>
-        <span class="navbar-brand mb-0 h1">Sistema Escolar</span>
-    </div>
-</nav>
 
-<div class="logo-willkadasa">WILLKADASA</div>
+        <span class="navbar-brand mb-0 h1 flex-grow-1 text-center"
+          >WILLKADASA — CRIAR TURMA</span
+        >
 
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 75vh;">
-    <div class="col-md-6">
+        <div class="dropdown">
+          <a
+            class="text-white fs-4"
+            href="#"   
+            role="button"
+            data-bs-toggle="dropdown"
+          >
+            <i class="bi bi-person-circle"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a
+                class="dropdown-item"
+                href="{{ url_for('config_conta_professor.config_conta') }}"
+                >Minha Conta</a
+              >
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a
+                class="dropdown-item text-danger"
+                href="{{ url_for('home.home') }}"
+                >Sair</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="logo-willkadasa">WILLKADASA</div>
+
+    <div
+      class="container d-flex justify-content-center align-items-center"
+      style="min-height: 75vh"
+    >
+      <div class="col-md-6">
         <div class="card shadow-sm">
-            <div class="card-body p-4">
+          <div class="card-body p-4">
+            <h4 class="text-center text-roxo mb-4">
+              <i class="bi bi-people-fill"></i> Criar Turma
+            </h4>
 
-                <h4 class="text-center text-roxo mb-4">
-                    <i class="bi bi-people-fill"></i> Criar Turma
-                </h4>
+            <form method="POST">
+              <!-- Nome da Turma -->
+              <div class="mb-3">
+                <label class="form-label">Nome da Turma</label>
+                <input
+                type="text"
+                name="nome_turma"
+                class="form-control"
+                placeholder="Ex: 2º Ano B"
+                required
+                />
+              </div>
 
-                <form method="POST">
-                    <!-- Nome da Turma -->
-                    <div class="mb-3">
-                        <label class="form-label">Nome da Turma</label>
-                        <input type="text" class="form-control" placeholder="Ex: 2º Ano B" required>
-                    </div>
+                <div class="mb-3">
+                <label class="form-label">Adicionar Alunos</label>
 
-                    <!-- Adicionar Aluno -->
-                    <div class="mb-3">
-                        <label class="form-label">Adicionar Aluno</label>
-                        <div class="input-group">
-                            <input type="text" id="alunoInput" class="form-control" placeholder="Nome do aluno">
-                            <button type="button" class="btn btn-roxo" onclick="adicionarAluno()">
-                                <i class="bi bi-plus-lg"></i>
-                            </button>
+                {% if alunos %}
+                    {% for aluno in alunos %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="alunos" value="{{ aluno[0] }}">
+                            <label class="form-check-label">{{ aluno[1] }}</label>
                         </div>
-                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">Nenhum aluno disponível.</p>
+                {% endif %}
+                </div>         
 
-                    <!-- Lista de Alunos -->
-                    <div class="mb-4">
-                        <label class="form-label">Alunos da Turma</label>
-                        <div id="listaAlunos">
-                            <!-- Alunos adicionados aparecerão aqui -->
-                            
-                        </div>
-                    </div>
+<!-- Lista de Alunos -->
+              <div class="mb-4">
+                <label class="form-label">Alunos da Turma</label>
+                <div id="listaAlunos">
+                  <!-- Alunos adicionados aparecerão aqui -->
+                </div>
+              </div>
 
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-roxo">
-                            <i class="bi bi-check-circle"></i> Criar Turma
-                        </button>
-                    </div>
-                </form>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-roxo">
+                  <i class="bi bi-check-circle"></i> Criar Turma
+                </button>
 
                 
-
-            </div>
+              </div>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-<footer class="text-center py-3 mt-5 border-top footer-roxo">
-    <div>
-    © <span id="ano"></span> WILLKADASA •
-    <a
-        href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL"
-        target="_blank"
-        class="text-decoration-none"
-    >
-        <i class="bi bi-github"></i> GitHub
-    </a>
-    •
-    </div>
-</footer>
+    <footer class="text-center py-3 mt-5 border-top footer-roxo">
+      <div>
+        © <span id="ano"></span> WILLKADASA •
+        <a
+          href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL"
+          target="_blank"
+          class="text-decoration-none"
+        >
+          <i class="bi bi-github"></i> GitHub
+        </a>
+        •
+      </div>
+    </footer>
 
-<!--MUDAR DEPOIS-->
-<script>
-function adicionarAluno() {
-    const input = document.getElementById("alunoInput");
-    const nome = input.value.trim();
-    const lista = document.getElementById("listaAlunos");
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    if (nome === "") return;
+    <!--MUDAR DEPOIS-->
+            <script>
+        function adicionarAluno() {
+        const input = document.getElementById("alunoInput");
+        const nome = input.value.trim();
+        const lista = document.getElementById("listaAlunos");
+        const hidden = document.getElementById("alunosInputHidden");
 
-    const div = document.createElement("div");
-    div.className = "d-flex justify-content-between align-items-center border rounded p-2 mb-2";
+        if (nome === "") return;
 
-    div.innerHTML = `
-        <span>${nome}</span>
-        <button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.remove()">
-            <i class="bi bi-x-lg"></i>
-        </button>
-    `;
+        const div = document.createElement("div");
+        div.className =
+            "d-flex justify-content-between align-items-center border rounded p-2 mb-2";
 
-    lista.appendChild(div);
-    input.value = "";
-    input.focus();
-}
-</script>
+        div.innerHTML = `
+            <span>${nome}</span>
+            <button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.remove(); atualizarHidden()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        `;
 
-</body>
+        lista.appendChild(div);
+        input.value = "";
+        input.focus();
+
+        atualizarHidden();
+        }
+
+        function atualizarHidden() {
+        const lista = document.querySelectorAll("#listaAlunos span");
+        const hidden = document.getElementById("alunosInputHidden");
+
+        const nomes = Array.from(lista).map(s => s.textContent);
+        hidden.value = JSON.stringify(nomes);
+        }
+    </script>
+  </body>
 </html>

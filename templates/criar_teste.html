@@ -49,7 +49,13 @@
             <i class="bi bi-person-circle"></i>
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#">Minha Conta</a></li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="{{ url_for('config_conta_professor.config_conta') }}"
+                >Minha Conta</a
+              >
+            </li>
             <li><hr class="dropdown-divider" /></li>
             <li>
               <a
@@ -74,7 +80,7 @@
           <div class="row g-3">
             <div class="col-md-4">
               <label class="form-label">Professor</label>
-              <!-- Tem que colocar o nome do professor que fez Login-->
+              
               <div class="form-control bg-light" id="nome_professor">
                 {{ nome_professor }}
               </div>
@@ -82,18 +88,21 @@
 
             <div class="col-md-4">
               <label class="form-label">Disciplina</label>
-              <!-- Deve aparecer as disciplinas na qual o tal professor atua-->
+        
               <select class="form-select">
-                <option>Escolha Uma Disciplina</option>
+                  <option selected disabled>Escolha Uma Disciplina</option>
+                  {% for d in disciplinas %}
+                  <option>{{ d }}</option>
+                  {% endfor %}
               </select>
             </div>
 
             <div class="col-md-4">
               <label class="form-label">Título do Teste</label>
               <input
-                type="text"
-                class="form-control"
-                placeholder="Ex: Avaliação 1º Trimestre"
+                  type="text"
+                  class="form-control"
+                  value="{{ titulo_sugerido }}"
               />
             </div>
           </div>
@@ -138,19 +147,19 @@
       </div>
     </div>
 
-  <footer class="text-center py-3 mt-5 border-top footer-roxo">
-    <div>
+    <footer class="text-center py-3 mt-5 border-top footer-roxo">
+      <div>
         © <span id="ano"></span> WILLKADASA •
         <a
-            href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL"
-            target="_blank"
-            class="text-decoration-none"
+          href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL"
+          target="_blank"
+          class="text-decoration-none"
         >
-        <i class="bi bi-github"></i> GitHub
+          <i class="bi bi-github"></i> GitHub
         </a>
-            •
-    </div>
-  </footer>
+        •
+      </div>
+    </footer>
 
     <!-- Bootstrap JS Bundle (necessário para dropdown funcionar) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

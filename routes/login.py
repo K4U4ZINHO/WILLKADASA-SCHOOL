@@ -33,22 +33,31 @@ def buscar_usuario(email):
 @login_bp.route("/professor", methods=["GET", "POST"])
 def login_professor():
     if request.method == "POST":
-        email = request.form.get("email")
+        email = request.form.get("email").strip().lower()
+        session["email"] = email
         senha = request.form.get("senha")
 
-        usuario = buscar_usuario(email)
+        with sqlite3.connect("willkadasa.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT senha_hash FROM email WHERE email_principal = ? AND tipo = 'professor'", (email,))
+            dados = cursor.fetchone()
 
-        if not usuario or criar_hash_senha(senha) != usuario[3] or usuario[4] != "professor":
-            flash("Email ou senha incorretos.", "danger")
-            return redirect(url_for("login.login_professor"))
+        if not dados:
+            flash("Email não encontrado.", "danger")
+            return render_template("login_professor.html")
 
-        session["usuario_id"] = usuario[0]
-        session["usuario_nome"] = usuario[1]
+        senha_hash = dados[0]
+
+        if criar_hash_senha(senha) != senha_hash:
+            flash("Senha incorreta.", "danger")
+            return render_template("login_professor.html")
+
+        
+        session["email"] = email
 
         return redirect(url_for("professor.dashboard_professor"))
 
     return render_template("login_professor.html")
-
 
 # -----------------------------
 # LOGIN DO ALUNO

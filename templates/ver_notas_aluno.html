@@ -2,7 +2,7 @@
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
-    <title>WILLKADASA - Minhas Turmas</title>
+    <title>WILLKADASA — Minhas Notas</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Bootstrap -->
@@ -27,21 +27,20 @@
       href="{{ url_for('static', filename='login.css') }}"
     />
   </head>
+
   <body>
     <nav class="navbar bg-roxo navbar-dark">
       <div class="container d-flex justify-content-between align-items-center">
-        <!-- voltar a página home_professor.html -->
         <a
           class="text-white fs-4"
-          href="{{ url_for('professor.dashboard_professor') }}"
-          role="button"
+          href="{{ url_for('aluno.dashboard_aluno') }}"
         >
           <i class="bi bi-arrow-return-left"></i>
         </a>
 
-        <span class="navbar-brand mb-0 h1 flex-grow-1 text-center"
-          >WILLKADASA — VER TURMAS</span
-        >
+        <span class="navbar-brand mb-0 h1 flex-grow-1 text-center">
+          WILLKADASA — NOTAS
+        </span>
 
         <div class="dropdown">
           <a
@@ -56,62 +55,47 @@
             <li>
               <a
                 class="dropdown-item"
-                href="{{ url_for('config_conta_professor.config_conta') }}"
-                >Minha Conta</a
-              >
+                href="{{ url_for('aluno.config_conta_aluno') }}"
+              >Minha Conta</a>
             </li>
             <li><hr class="dropdown-divider" /></li>
             <li>
               <a
                 class="dropdown-item text-danger"
                 href="{{ url_for('home.home') }}"
-                >Sair</a
-              >
+              >Sair</a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
 
-    <div class="logo-willkadasa">WILLKADASA</div>
+    <div class="container my-5" style="min-height: 71vh;">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h4 class="text-center text-roxo mb-4">
+            <i class="bi bi-clipboard-check"></i> Minhas Notas
+          </h4>
 
-    <div
-      class="container d-flex justify-content-center align-items-center"
-      style="min-height: 75vh"
-    >
-      <div class="col-md-7">
-        <div class="card shadow-sm">
-          <div class="card-body p-4">
-            <h4 class="text-center text-roxo mb-4">
-              <i class="bi bi-people-fill"></i> Minhas Turmas
-            </h4>
-
-            <h4 class="text-center text-roxo mb-4">
-          <i class="bi bi-ban"></i>
-  {% if turma %}
-      Turma {{ turma[0] }}
-  {% else %}
-      Você ainda não está em nenhuma turma
-  {% endif %}
-</h4>
-
-<ul class="list-group">
-  {% if alunos %}
-      {% for a in alunos %}
-          <li class="list-group-item d-flex align-items-center">
-              <i class="bi bi-person-fill me-2 text-roxo"></i>
-              {{ a[0] }}
-          </li>
-      {% endfor %}
-  {% else %}
-      <li class="list-group-item text-center text-muted">
-          Nenhum aluno encontrado na turma.
-      </li>
-  {% endif %}
-</ul>
-              </div>
-            </div>
-          </div>
+          <ul class="list-group">
+            {% if notas %}
+              {% for n in notas %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                  <i class="bi bi-file-earmark-text me-2 text-roxo"></i>
+                  {{ n.teste }}
+                </span>
+                <span class="badge bg-roxo fs-6">
+                  {{ n.nota }}
+                </span>
+              </li>
+              {% endfor %}
+            {% else %}
+              <li class="list-group-item text-center text-muted">
+                Nenhum teste realizado ainda.
+              </li>
+            {% endif %}
+          </ul>
         </div>
       </div>
     </div>
@@ -126,11 +110,13 @@
         >
           <i class="bi bi-github"></i> GitHub
         </a>
-        •
       </div>
     </footer>
 
-    <!-- Bootstrap JS -->
+    <script>
+      document.getElementById("ano").innerText = new Date().getFullYear();
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

@@ -32,7 +32,7 @@ def cadastro():
         # -----------------------------
         if tipo == "professor":
             nome = request.form.get("nome_prof")
-            email = request.form.get("email_prof")
+            email = request.form.get("email_prof").strip().lower()
             senha = request.form.get("senha_prof")
             senha_secreta = request.form.get("senha_secreta_prof")
 
@@ -63,11 +63,22 @@ def cadastro():
         try:
             with sqlite3.connect("willkadasa.db", timeout=5) as conn:
                 cursor = conn.cursor()
+
+                # Inserir na tabela email
                 cursor.execute("""
                     INSERT INTO email (nome, email_principal, senha_hash, tipo)
                     VALUES (?, ?, ?, ?)
                 """, (nome, email, senha_hash, tipo))
+
+                # Inserir na tabela professores
+                if tipo == "professor":
+                    cursor.execute("""
+                        INSERT INTO professores (nome, email_id)
+                        VALUES (?, (SELECT id FROM email WHERE email_principal = ?))
+                    """, (nome, email))
+
                 conn.commit()
+
         except sqlite3.IntegrityError:
             flash("Erro: este usuário já existe.", "danger")
             return render_template("cadastro.html", proximo_usuario=proximo_usuario)

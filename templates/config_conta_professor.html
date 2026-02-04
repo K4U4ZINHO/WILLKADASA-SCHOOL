@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} mt-3">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
     <meta charset="UTF-8">
     <title>WILLKADASA - Configurações da Conta</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,9 +35,7 @@
     </div>
 </nav>
 
-<div class="logo-willkadasa">WILLKADASA</div>
-
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 75vh;">
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 78.5vh;">
     <div class="col-md-7">
         <div class="card shadow-sm">
             <div class="card-body p-4">
@@ -40,49 +47,49 @@
                 <form method="POST">
 
                     <!-- Dados já preenchidos -->
-                    <h5 class="text-roxo mb-3">🔒 Dados já preenchidos</h5>
+                    <h5 class="text-roxo mb-3"><i class="bi bi-lock-fill"></i> Dados já preenchidos</h5>
 
                     <div class="row g-3 mb-4">
                         <div class="col-md-4">
                             <label class="form-label">Nome</label>
-                            <input type="text" class="form-control" value="Nome do Professor" disabled>
+                            <input type="text" class="form-control" value="{{ nome_professor }}" disabled>
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-control" value="email@exemplo.com" disabled>
+                            <input type="email" class="form-control" value="{{ email_professor }}" disabled>
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label">Senha</label>
-                            <input type="password" class="form-control" value="12345678" disabled>
+                            <input type="password" class="form-control" value="{{ senha_professor }}" disabled>
                         </div>
                     </div>
 
                     <hr>
 
                     <!-- Completar dados -->
-                    <h5 class="text-roxo mb-3">📝 Completar dados</h5>
+                    <h5 class="text-roxo mb-3"><i class="bi bi-journal-medical"></i> Completar dados</h5>
 
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label class="form-label">Data de Nascimento</label>
-                            <input type="date" class="form-control" name="data_nascimento" required>
+                            <input type="date" class="form-control" name="data_nascimento" value="{{ data_nascimento or '' }}">
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Telefone</label>
-                            <input type="tel" class="form-control" name="telefone" placeholder="(11) 99999-9999" required>
+                            <input type="tel" class="form-control" name="telefone" value="{{ telefone or '' }}">
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Email Secundário (Opcional)</label>
-                            <input type="email" class="form-control" name="email_secundario" placeholder="para recuperação de senha">
+                            <input type="email" class="form-control" name="email_secundario" value="{{ email_secundario or '' }}">
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Disciplinas</label>
-                            <input type="text" class="form-control" name="disciplinas" placeholder="Ex: Matemática, Física">
+                            <input type="text" class="form-control" name="disciplinas" value="{{ disciplinas or '' }}">
                         </div>
                     </div>
 
@@ -98,6 +105,20 @@
         </div>
     </div>
 </div>
+
+<footer class="text-center py-3 mt-5 border-top footer-roxo">
+    <div>
+    © <span id="ano"></span> WILLKADASA •
+    <a
+        href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL"
+        target="_blank"
+        class="text-decoration-none"
+    >
+        <i class="bi bi-github"></i> GitHub
+    </a>
+    •
+    </div>
+</footer>
 
 </body>
 </html>

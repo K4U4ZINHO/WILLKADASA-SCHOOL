@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WILLKADASA — Minha Turma</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <!-- Fonte -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS do projeto -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='login.css') }}"
+    />
+  </head>
+
+  <body>
+    <nav class="navbar bg-roxo navbar-dark">
+      <div class="container d-flex justify-content-between align-items-center">
+        <a
+          class="text-white fs-4"
+          href="{{ url_for('aluno.dashboard_aluno') }}"
+        >
+          <i class="bi bi-arrow-return-left"></i>
+        </a>
+
+        <span class="navbar-brand mb-0 h1 flex-grow-1 text-center">
+          WILLKADASA — MINHA TURMA
+        </span>
+
+        <div class="dropdown">
+          <a
+            class="text-white fs-4"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+          >
+            <i class="bi bi-person-circle"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a
+                class="dropdown-item"
+                href="{{ url_for('aluno.config_conta_aluno') }}"
+              >Minha Conta</a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a
+                class="dropdown-item text-danger"
+                href="{{ url_for('home.home') }}"
+              >Sair</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container my-5" style="min-height: 71vh">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h4 class="text-center text-roxo mb-4">
+            <i class="bi bi-people-fill"></i>
+            Turma <!--{{ turma.nome if turma else "—" }}-->
+          </h4>
+
+          <p class="text-muted text-center mb-4">
+            Alunos da sua turma:
+          </p>
+
+          <ul class="list-group">
+            {% if alunos %}
+              {% for a in alunos %}
+              <li class="list-group-item d-flex align-items-center">
+                <i class="bi bi-person-fill me-2 text-roxo"></i>
+                {{ a.nome }}
+              </li>
+              {% endfor %}
+            {% else %}
+              <li class="list-group-item text-center text-muted">
+                Nenhum aluno encontrado na turma.
+              </li>
+            {% endif %}
+          </ul>
+           <!-- Lista de Turmas -->
+        <div class="list-group">
+          <!-- Turma 1 -->
+          <div
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <div>
+              <strong>Turma 3º A</strong><br />
+              <small class="text-muted">Matemática • 28 alunos</small>
+            </div>
+            <!--Rota só pra teste turma_professor-->
+            <a
+              href="{{ url_for('professor.turma_professor')}}"
+              class="btn btn-roxo btn-sm"   
+            >
+              <i class="bi bi-box-arrow-in-right"></i> Entrar
+            </a>
+          </div>
+
+          <!-- Turma 2 -->
+          <div
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <div>
+              <strong>Turma 2º B</strong><br />
+              <small class="text-muted">Física • 25 alunos</small>
+            </div>
+            <a href="#" class="btn btn-roxo btn-sm">
+              <i class="bi bi-box-arrow-in-right"></i> Entrar
+            </a>
+          </div>
+
+          <!-- Turma 3 -->
+          <div
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <div>
+              <strong>Turma 1º C</strong><br />
+              <small class="text-muted">Química • 30 alunos</small>
+            </div>
+            <a href="#" class="btn btn-roxo btn-sm">
+              <i class="bi bi-box-arrow-in-right"></i> Entrar
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="text-center py-3 mt-5 border-top footer-roxo">
+      <div>
+        © <span id="ano"></span> WILLKADASA •
+        <a
+          href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL"
+          target="_blank"
+          class="text-decoration-none"
+        >
+          <i class="bi bi-github"></i> GitHub
+        </a>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById("ano").innerText = new Date().getFullYear();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
