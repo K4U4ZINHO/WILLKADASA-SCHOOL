@@ -1,4 +1,4 @@
-
+ C:\Python313\python.exe "c:/Users/k4u4n/OneDrive - AEBJC/Escola/PSI/12/Breno/Modulo_17/Projeto_modulo17/main.py"
 
 
 
@@ -6,3 +6,6 @@
  <!--{{ url_for('professor.ver_notas_teste', id_teste=1) }}-->
 
  <!--action="{{ url_for('aluno.enviar_teste, id_teste=id_teste')}}"-->
+
+
+ oqal csks rvyq booo

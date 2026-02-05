@@ -13,18 +13,15 @@ def criar_hash_senha(senha):
 
 
 def buscar_usuario(email):
-    conn = sqlite3.connect("willkadasa.db")
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT id, nome, email_principal, senha_hash, tipo
-        FROM email
-        WHERE email_principal = ?
-    """, (email,))
-
-    usuario = cursor.fetchone()
-    conn.close()
-    return usuario
+    with sqlite3.connect("willkadasa.db") as conn:
+        cursor = conn.cursor()
+        # A ordem aqui define os índices usuario[0], usuario[1], etc.
+        cursor.execute("""
+            SELECT id, nome, email_principal, senha_hash, tipo 
+            FROM email 
+            WHERE email_principal = ?
+        """, (email,))
+        return cursor.fetchone()
 
 
 # -----------------------------
@@ -65,18 +62,32 @@ def login_professor():
 @login_bp.route("/aluno", methods=["GET", "POST"])
 def login_aluno():
     if request.method == "POST":
-        skwd = request.form.get("skwd")
+        # Pegamos o SKWD (ex: 0001)
+        skwd = request.form.get("skwd", "").strip()
         senha = request.form.get("senha")
 
+        # 1. Busca o usuário na tabela 'email' onde o email_principal é o SKWD
         usuario = buscar_usuario(skwd)
 
-        if not usuario or criar_hash_senha(senha) != usuario[3] or usuario[4] != "aluno":
-            flash("SKWD ou senha incorretos.", "danger")
-            return redirect(url_for("login.login_aluno"))
+        # 2. Validação
+        # usuario[0]=id, usuario[1]=nome, usuario[2]=email_principal, usuario[3]=senha_hash, usuario[4]=tipo
+        if usuario:
+            if criar_hash_senha(senha) == usuario[3] and usuario[4] == "aluno":
+                session.clear()
 
-        session["usuario_id"] = usuario[0]
-        session["usuario_nome"] = usuario[1]
+                # Define as variáveis de sessão
+                session["usuario_id"] = usuario[0]
+                session["usuario_nome"] = usuario[1]
+                session["email"] = usuario[2]  # Aqui fica o SKWD (ex: 0001)
+                session["tipo"] = "aluno"
 
-        return redirect(url_for("aluno.dashboard_aluno"))
+                flash(f"Bem-vindo, {usuario[1]}!", "success")
+                return redirect(url_for("aluno.dashboard_aluno"))
+            else:
+                flash("Senha incorreta para este código SKWD.", "danger")
+        else:
+            flash("Código SKWD não encontrado.", "danger")
+
+        return redirect(url_for("login.login_aluno"))
 
     return render_template("login_aluno.html")

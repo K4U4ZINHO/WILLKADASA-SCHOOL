@@ -32,16 +32,27 @@ def dashboard_professor():
 # def ver_turma():
 #     return render_template("ver_turma.html")
 
-@professor_bp.route("/turma_professor")
-def turma_professor():
-    return render_template("turma_professor.html")
+# @professor_bp.route("/turma_professor")
+# def turma_professor():
+#     return render_template("turma_professor.html")
 
-@professor_bp.route("/notas_gerais")
-def notas_gerais():
-    return render_template("notas_gerais.html")
+# @professor_bp.route("/notas_gerais")
+# def notas_gerais():
+#     return render_template("notas_gerais.html")
 
 @professor_bp.route("/notas_individuais")
 def notas_individuais():
     return render_template("notas_individuais.html")
+
+
+@professor_bp.route("/recuperar_senha")
+def recuperar_senha():
+    return render_template("recuperar_senha.html")
+
+
+@professor_bp.route("/trocar_senha")
+def trocar_senha():
+    return render_template("trocar_senha.html")
+
 
 

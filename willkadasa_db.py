@@ -19,6 +19,15 @@ CREATE TABLE IF NOT EXISTS email (
 """)
 
 cursor.execute("""
+CREATE TABLE IF NOT EXISTS questoes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    enunciado TEXT NOT NULL,
+    tipo TEXT, -- 'multipla_escolha', 'texto', etc
+    resposta_correta TEXT
+)
+""")
+
+cursor.execute("""
 CREATE TABLE IF NOT EXISTS disciplinas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL

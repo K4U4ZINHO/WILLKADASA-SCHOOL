@@ -46,7 +46,7 @@
 
                     <form method="POST" action="{{ url_for('cadastro.cadastro') }}" id="formCadastro">
                         <div class="mb-3">
-                            <label class="form-label">Tipo de Conta</label>
+                            <label class="form-label">Escolha a sua Conta</label>
                             <select name="tipo" id="tipoConta" class="form-select" required>
                                 <option value="" disabled selected>Selecione...</option>
                                 <option value="aluno">Aluno</option>
@@ -57,7 +57,7 @@
                         <!-- CAMPOS SENHA PARA LIBERAR CAMPO PROFESSOR -->
                         <div id="camposProfessorSenha" class="d-none"><!--Depois tirar o "display:none"-->
                             <div class="mb-3">
-                            <label class="form-label">Senha(<span class="text-danger">Para Liberar O Acesso</span>)</label>
+                            <label class="form-label">Senha(<span class="text-danger">Para ter Acesso</span>)</label>
                             <input type="password" name="senha_secreta_prof" class="form-control" placeholder="Digite a senha secreta">
                             </div>
 

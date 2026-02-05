@@ -29,7 +29,7 @@
       <div class="container d-flex justify-content-between align-items-center">
         <a
           class="text-white fs-4"
-          href="{{ url_for('aluno.testes_pendentes_aluno') }}"
+          href="{{ url_for('testes_pendentes_aluno_sessao.testes_pendentes_aluno') }}"
         >
           <i class="bi bi-arrow-return-left"></i>
         </a>
@@ -51,8 +51,8 @@
             <li>
               <a
                 class="dropdown-item"
-                href="{{ url_for('aluno.config_conta_aluno') }}"
-              >Minha Conta</a>
+                href="{{ url_for('config_conta_aluno.config_conta_aluno') }}"
+              >Gerir Conta</a>
             </li>
             <li><hr class="dropdown-divider" /></li>
             <li>
@@ -70,46 +70,46 @@
       <div class="card shadow-sm">
         <div class="card-body">
           <h4 class="text-roxo mb-4">
-            <i class="bi bi-pencil-square"></i>
-            titulo_teste 
-          </h4>
-<!--tem que ter um coiso no post pra enviar-->
-          <form method="POST">
-            
-            <!--{% for q in questoes %}-->
-            <div class="border rounded p-3 mb-4">
-              <h5 class="text-roxo">Questão <!--{{ loop.index }}--></h5>
+    <i class="bi bi-pencil-square"></i>
+    {{ exame.titulo }}
+</h4>
+<form method="POST" class="needs-validation" novalidate>
+    {% for q in questoes %}
+    <div class="card mb-4 border-0 shadow-sm overflow-hidden" style="border-radius: 15px;">
+        <div class="card-header bg-roxo-claro text-roxo fw-bold py-3 border-0">
+            <i class="bi bi-question-circle-fill me-2"></i> Questão {{ loop.index }}
+        </div>
+        <div class="card-body p-4 bg-white">
+            <p class="fs-5 mb-4 text-dark">{{ q.enunciado }}</p>
 
-              <p class="mt-2">enunciado</p>
-
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="q{{ q.id }}" value="A" required>
-                <label class="form-check-label"> q.a </label>
-              </div>
-
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="q{{ q.id }}" value="B">
-                <label class="form-check-label"> q.b </label>
-              </div>
-
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="q{{ q.id }}" value="C">
-                <label class="form-check-label"> q.c </label>
-              </div>
-
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="q{{ q.id }}" value="D">
-                <label class="form-check-label"> q.d </label>
-              </div>
+            {% if q.tipo == 'multipla_escolha' %}
+            <div class="options-grid">
+                {% for letra in ['A', 'B', 'C', 'D'] %}
+                <div class="form-check custom-option p-0 mb-3">
+                    <input class="btn-check" type="radio" name="q{{ q.id }}" id="q{{ q.id }}{{ letra }}" value="{{ letra }}" required>
+                    <label class="btn btn-outline-roxo w-100 text-start p-3 d-flex align-items-center" for="q{{ q.id }}{{ letra }}">
+                        <span class="badge bg-roxo me-3">{{ letra }}</span>
+                        <span>Opção {{ letra }}</span> </label>
+                </div>
+                {% endfor %}
             </div>
-            <!--{% endfor %}-->
-
-            <div class="d-grid mt-4">
-              <button type="submit" class="btn btn-roxo btn-lg">
-                <i class="bi bi-check-circle"></i> Enviar Teste
-              </button>
+            {% else %}
+            <div class="form-floating">
+                <textarea class="form-control border-roxo" name="q{{ q.id }}" placeholder="Sua resposta" id="text{{ q.id }}" style="height: 120px; border-radius: 10px;"></textarea>
+                <label for="text{{ q.id }}">Escreva sua resposta detalhadamente...</label>
             </div>
-          </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="d-grid gap-2 mt-5">
+        <button type="submit" class="btn btn-roxo btn-lg shadow" style="border-radius: 50px; padding: 15px;">
+            <i class="bi bi-cloud-arrow-up-fill me-2"></i> FINALIZAR E ENVIAR TESTE
+        </button>
+        <p class="text-center text-muted small mt-2">Ao enviar, suas respostas serão corrigidas automaticamente.</p>
+    </div>
+</form>
         </div>
       </div>
     </div>

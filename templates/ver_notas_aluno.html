@@ -55,7 +55,7 @@
             <li>
               <a
                 class="dropdown-item"
-                href="{{ url_for('aluno.config_conta_aluno') }}"
+                href="{{ url_for('config_conta_aluno.config_conta_aluno') }}"
               >Minha Conta</a>
             </li>
             <li><hr class="dropdown-divider" /></li>
@@ -80,15 +80,17 @@
           <ul class="list-group">
             {% if notas %}
               {% for n in notas %}
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>
-                  <i class="bi bi-file-earmark-text me-2 text-roxo"></i>
-                  {{ n.teste }}
-                </span>
-                <span class="badge bg-roxo fs-6">
-                  {{ n.nota }}
-                </span>
-              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center shadow-sm mb-2 border-0" style="border-radius: 10px;">
+    <span>
+        <i class="bi bi-file-earmark-check me-2 text-roxo"></i>
+        <strong>{{ n.teste }}</strong>
+    </span>
+    <span class="badge {% if n.nota != None and n.nota >= 10 %}bg-success{% else %}bg-danger{% endif %} fs-6 px-3 py-2 rounded-pill">
+    {{ n.nota if n.nota != None else 'Pendente' }} val.
+</span>
+        {{ n.nota }} val.
+    </span>
+</li>
               {% endfor %}
             {% else %}
               <li class="list-group-item text-center text-muted">

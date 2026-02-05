@@ -43,6 +43,7 @@ def criar_teste():
     else:
         trimestre = "4º Trimestre"
 
+    # ... (código anterior igual)
     titulo_sugerido = f"Avaliação {trimestre}"
 
     return render_template(

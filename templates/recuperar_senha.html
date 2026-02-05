@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WILLKADASA — Recuperar Senha</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='recuperar_senha.css') }}"
+    />
+  </head>
+
+  <body>
+    <nav class="navbar bg-roxo navbar-dark">
+      <div class="container d-flex justify-content-between align-items-center">
+        <a
+          class="text-white fs-4"
+          href="{{ url_for('login.login_professor') }}"
+        >
+          <i class="bi bi-arrow-return-left"></i>
+        </a>
+        <span class="navbar-brand mb-0 h1 flex-grow-1 text-center">
+          WILLKADASA — Recuperar Senha
+        </span>
+      </div>
+    </nav>
+
+    <div class="container my-5">
+      <div class="row justify-content-center">
+        <div class="col-md-5">
+          <div class="card shadow-sm">
+            <div class="card-body p-4">
+              <h4 class="text-roxo text-center mb-4">
+                <i class="bi bi-key-fill"></i> Recuperar Senha
+              </h4>
+              <p class="text-muted text-center mb-4">
+                Insira o seu email secundário para receber as instruções para a 
+                recuperação de senha.
+              </p>
+
+              <form id="recuperarForm">
+                <div class="mb-3">
+                  <label for="email_secundario" class="form-label"
+                    >Email Secundário</label
+                  >
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email_secundario"
+                    placeholder="seuemail@exemplo.com"
+                    required
+                  />
+                </div>
+                <div class="d-grid mt-4">
+                  <button type="submit" class="btn btn-roxo btn-lg">
+                    <i class="bi bi-envelope-fill"></i> Enviar Instruções
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <p class="text-center mt-3 text-muted">
+            Lembrou a senha?
+            <a
+              href="{{ url_for('login.login_professor') }}"
+              class="text-roxo text-decoration-none"
+              >Faça login</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para digitar código -->
+    <div class="modal fade" id="modalCodigo" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-roxo">
+          <div class="modal-header bg-roxo text-white">
+            <h5 class="modal-title">
+              <i class="bi bi-key-fill"></i> Código de Recuperação
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>Digite o código enviado para seu email:</p>
+            <input
+              type="text"
+              id="inputCodigo"
+              class="form-control"
+              placeholder="SKWD123456"
+            />
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-roxo" id="verificarCodigo">
+              Verificar Código
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de aviso -->
+    <div class="modal fade" id="modalAviso" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-roxo">
+          <div class="modal-header bg-roxo text-white">
+            <h5 class="modal-title">
+              <i class="bi bi-exclamation-triangle-fill"></i> Aviso
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p id="mensagemAviso"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-roxo" data-bs-dismiss="modal">
+              Fechar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="text-center py-3 mt-5 border-top footer-roxo">
+      <div>
+        © <span id="ano"></span> WILLKADASA •
+        <a
+          href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL"
+          target="_blank"
+          class="text-decoration-none"
+        >
+          <i class="bi bi-github"></i> GitHub
+        </a>
+        •
+      </div>
+    </footer>
+
+<script>
+document.getElementById("ano").innerText = new Date().getFullYear();
+
+const form = document.getElementById("recuperarForm");
+let codigoGerado = "";
+
+// Função para mostrar modal de aviso com ícone
+function mostrarAviso(mensagem, tipo = "erro") {
+  const msgEl = document.getElementById("mensagemAviso");
+
+  // Define o ícone conforme o tipo
+  let icone = "";
+  if (tipo === "erro") icone = '<i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>';
+  else if (tipo === "sucesso") icone = '<i class="bi bi-check-circle-fill text-success me-2"></i>';
+  else icone = "";
+
+  msgEl.innerHTML = icone + mensagem;
+
+  const modal = new bootstrap.Modal(document.getElementById("modalAviso"));
+  modal.show();
+}
+
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+  const email = document.getElementById("email_secundario").value.trim();
+  if (!email) {
+    mostrarAviso("Por favor, insira seu email secundário.", "erro");
+    return;
+  }
+
+  // Gerar código aleatório de 6 dígitos
+  codigoGerado = "SKWD" + Math.floor(100000 + Math.random() * 900000);
+
+  // Aqui você pode chamar seu Flask ou JS para enviar o código por email
+  console.log("Código enviado para o email:", codigoGerado);
+
+  // Abrir modal de código
+  const modal = new bootstrap.Modal(document.getElementById("modalCodigo"));
+  modal.show();
+});
+
+// Verificar código
+document.getElementById("verificarCodigo").addEventListener("click", function() {
+  const codigoInput = document.getElementById("inputCodigo").value.trim();
+  if (codigoInput === codigoGerado) {
+    mostrarAviso("Código correto! Você será redirecionado para trocar a senha.", "sucesso");
+    setTimeout(() => {
+      window.location.href = "{{ url_for('professor.trocar_senha') }}"; // substitua pela rota real
+    }, 1500); // espera 1,5s para o usuário ver a mensagem
+  } else {
+    mostrarAviso("Código incorreto, tente novamente.", "erro");
+  }
+});
+</script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

@@ -5,36 +5,16 @@
     <title>WILLKADASA — Testes Pendentes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Bootstrap -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-
-    <!-- Fonte -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- CSS do projeto -->
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='login.css') }}"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}" />
   </head>
 
   <body>
     <nav class="navbar bg-roxo navbar-dark">
       <div class="container d-flex justify-content-between align-items-center">
-        <a
-          class="text-white fs-4"
-          href="{{ url_for('aluno.dashboard_aluno') }}"
-        >
+        <a class="text-white fs-4" href="{{ url_for('aluno.dashboard_aluno') }}">
           <i class="bi bi-arrow-return-left"></i>
         </a>
 
@@ -43,28 +23,13 @@
         </span>
 
         <div class="dropdown">
-          <a
-            class="text-white fs-4"
-            href="#"
-            role="button"
-            data-bs-toggle="dropdown"
-          >
+          <a class="text-white fs-4" href="#" role="button" data-bs-toggle="dropdown">
             <i class="bi bi-person-circle"></i>
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li>
-              <a
-                class="dropdown-item"
-                href="{{ url_for('aluno.config_conta_aluno') }}"
-              >Minha Conta</a>
-            </li>
+            <li><a class="dropdown-item" href="{{ url_for('config_conta_aluno.config_conta_aluno') }}">Gerir Conta</a></li>
             <li><hr class="dropdown-divider" /></li>
-            <li>
-              <a
-                class="dropdown-item text-danger"
-                href="{{ url_for('home.home') }}"
-              >Sair</a>
-            </li>
+            <li><a class="dropdown-item text-danger" href="{{ url_for('home.home') }}">Sair</a></li>
           </ul>
         </div>
       </div>
@@ -77,28 +42,32 @@
             <i class="bi bi-hourglass-split"></i> Testes Não Realizados
           </h4>
 
-          <ul class="list-group">
+          <div class="list-group">
             {% if testes %}
               {% for t in testes %}
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>
-                  <i class="bi bi-file-earmark-text me-2 text-roxo"></i>
-                  {{ t.nome }}
-                </span>
-                <a
-                  href="{{ url_for('aluno.realizar_teste') }}"
-                  class="btn btn-roxo btn-sm"
-                >
-                  Realizar Teste
+              <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-file-earmark-text fs-4 me-3 text-roxo"></i>
+                  <div>
+                    <h6 class="mb-0 fw-bold">{{ t.titulo }}</h6>
+                    <small class="text-muted">
+                      <i class="bi bi-clock me-1"></i> {{ t.duracao_minutos }} minutos
+                    </small>
+                  </div>
+                </div>
+                
+                <a href="{{ url_for('aluno.realizar_teste', id_exame=t.id) }}" class="btn btn-roxo btn-sm px-4">
+                  Começar
                 </a>
-              </li>
+              </div>
               {% endfor %}
             {% else %}
-              <li class="list-group-item text-center text-muted">
-                Nenhum teste pendente 🎉
-              </li>
+              <div class="text-center py-5">
+                <i class="bi bi-check-circle-fill text-success fs-1 mb-3"></i>
+                <p class="text-muted mb-0">Parabéns! Não há nenhum teste pendente para esta turma.</p>
+              </div>
             {% endif %}
-          </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -106,20 +75,15 @@
     <footer class="text-center py-3 mt-5 border-top footer-roxo">
       <div>
         © <span id="ano"></span> WILLKADASA •
-        <a
-          href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL"
-          target="_blank"
-          class="text-decoration-none"
-        >
+        <a href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL" target="_blank" class="text-decoration-none">
           <i class="bi bi-github"></i> GitHub
         </a>
       </div>
     </footer>
 
-    <script>
-      document.getElementById("ano").innerText = new Date().getFullYear();
-    </script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.getElementById("ano").textContent = new Date().getFullYear();
+    </script>
   </body>
 </html>

@@ -36,3 +36,39 @@ body {
 .footer-roxo a:hover {
     color: #e0d2ff !important;
 }
+
+
+.q-nav {
+display: flex;
+gap: 8px;
+flex-wrap: wrap;
+}
+
+.q-btn {
+width: 42px;
+height: 42px;
+border-radius: 10px;
+background: #6f2dbd;
+color: white;
+font-weight: bold;
+border: none;
+cursor: pointer;
+transition: 0.2s;
+}
+
+.q-btn:hover {
+background: #5a22a0;
+}
+
+.q-btn.active {
+background: #4a168a;
+box-shadow: 0 0 0 3px rgba(111,45,189,.3);
+}
+
+.q-btn.plus {
+background: #28a745;
+}
+
+.q-btn.plus:hover {
+background: #218838;
+}

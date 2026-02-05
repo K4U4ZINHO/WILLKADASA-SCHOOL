@@ -85,30 +85,54 @@
             <h4 class="text-center text-roxo mb-4">
               <i class="bi bi-people-fill"></i> Minhas Turmas
             </h4>
+<div class="list-group">
+  {% if turmas %}
+    {% for turma in turmas %}
+      <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <strong>Turma {{ turma.nome }}</strong><br />
+          <small class="text-muted">{{ turma.total }} alunos vinculados</small>
+        </div>
+        
+        <div class="d-flex gap-2">
+          <a href="{{ url_for('ver_turma.detalhes_turma', id_turma=turma.id) }}" class="btn btn-roxo btn-sm">
+            <i class="bi bi-box-arrow-in-right"></i> Entrar
+          </a>
 
-            <h4 class="text-center text-roxo mb-4">
-          <i class="bi bi-ban"></i>
-  {% if turma %}
-      Turma {{ turma[0] }}
-  {% else %}
-      Você ainda não está em nenhuma turma
-  {% endif %}
-</h4>
+          <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ turma.id }}">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </div>
 
-<ul class="list-group">
-  {% if alunos %}
-      {% for a in alunos %}
-          <li class="list-group-item d-flex align-items-center">
-              <i class="bi bi-person-fill me-2 text-roxo"></i>
-              {{ a[0] }}
-          </li>
-      {% endfor %}
+      <div class="modal fade" id="deleteModal{{ turma.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Excluir Turma</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Tem certeza que deseja excluir a <strong>Turma {{ turma.nome }}</strong>? 
+              <p class="text-danger small mt-2"><i class="bi bi-info-circle"></i> Os alunos desta turma ficarão sem turma atribuída.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <form action="{{ url_for('ver_turma.excluir_turma', id_turma=turma.id) }}" method="POST">
+                <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
   {% else %}
-      <li class="list-group-item text-center text-muted">
-          Nenhum aluno encontrado na turma.
-      </li>
+    <div class="text-center py-4">
+      <p class="text-muted">Nenhuma turma encontrada.</p>
+    </div>
   {% endif %}
-</ul>
+</div>
+
               </div>
             </div>
           </div>

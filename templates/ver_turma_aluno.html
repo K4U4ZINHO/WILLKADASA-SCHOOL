@@ -5,36 +5,16 @@
     <title>WILLKADASA — Minha Turma</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Bootstrap -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-
-    <!-- Fonte -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- CSS do projeto -->
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='login.css') }}"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}" />
   </head>
 
   <body>
     <nav class="navbar bg-roxo navbar-dark">
       <div class="container d-flex justify-content-between align-items-center">
-        <a
-          class="text-white fs-4"
-          href="{{ url_for('aluno.dashboard_aluno') }}"
-        >
+        <a class="text-white fs-4" href="{{ url_for('aluno.dashboard_aluno') }}">
           <i class="bi bi-arrow-return-left"></i>
         </a>
 
@@ -43,27 +23,16 @@
         </span>
 
         <div class="dropdown">
-          <a
-            class="text-white fs-4"
-            href="#"
-            role="button"
-            data-bs-toggle="dropdown"
-          >
+          <a class="text-white fs-4" href="#" role="button" data-bs-toggle="dropdown">
             <i class="bi bi-person-circle"></i>
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
             <li>
-              <a
-                class="dropdown-item"
-                href="{{ url_for('aluno.config_conta_aluno') }}"
-              >Minha Conta</a>
+              <a class="dropdown-item" href="{{ url_for('config_conta_aluno.config_conta_aluno') }}">Minha Conta</a>
             </li>
             <li><hr class="dropdown-divider" /></li>
             <li>
-              <a
-                class="dropdown-item text-danger"
-                href="{{ url_for('home.home') }}"
-              >Sair</a>
+              <a class="dropdown-item text-danger" href="{{ url_for('home.home') }}">Sair</a>
             </li>
           </ul>
         </div>
@@ -71,75 +40,54 @@
     </nav>
 
     <div class="container my-5" style="min-height: 71vh">
-      <div class="card shadow-sm">
+      <div class="card shadow-sm border-0">
         <div class="card-body p-4">
-          <h4 class="text-center text-roxo mb-4">
-            <i class="bi bi-people-fill"></i>
-            Turma <!--{{ turma.nome if turma else "—" }}-->
-          </h4>
-
-          <p class="text-muted text-center mb-4">
-            Alunos da sua turma:
-          </p>
-
-          <ul class="list-group">
-            {% if alunos %}
-              {% for a in alunos %}
-              <li class="list-group-item d-flex align-items-center">
-                <i class="bi bi-person-fill me-2 text-roxo"></i>
-                {{ a.nome }}
-              </li>
-              {% endfor %}
-            {% else %}
-              <li class="list-group-item text-center text-muted">
-                Nenhum aluno encontrado na turma.
-              </li>
-            {% endif %}
-          </ul>
-           <!-- Lista de Turmas -->
-        <div class="list-group">
-          <!-- Turma 1 -->
-          <div
-            class="list-group-item d-flex justify-content-between align-items-center"
-          >
-            <div>
-              <strong>Turma 3º A</strong><br />
-              <small class="text-muted">Matemática • 28 alunos</small>
+          
+          {% if turma %}
+            <div class="text-center mb-4">
+              <h4 class="text-roxo fw-bold">
+                <i class="bi bi-people-fill me-2"></i>
+                Turma: {{ turma.nome }}
+              </h4>
+              <p class="text-muted small">Confira abaixo seus colegas de classe</p>
             </div>
-            <!--Rota só pra teste turma_professor-->
-            <a
-              href="{{ url_for('professor.turma_professor')}}"
-              class="btn btn-roxo btn-sm"   
-            >
-              <i class="bi bi-box-arrow-in-right"></i> Entrar
-            </a>
-          </div>
 
-          <!-- Turma 2 -->
-          <div
-            class="list-group-item d-flex justify-content-between align-items-center"
-          >
-            <div>
-              <strong>Turma 2º B</strong><br />
-              <small class="text-muted">Física • 25 alunos</small>
-            </div>
-            <a href="#" class="btn btn-roxo btn-sm">
-              <i class="bi bi-box-arrow-in-right"></i> Entrar
-            </a>
-          </div>
+            <ul class="list-group list-group-flush">
+              {% if alunos %}
+                {% for a in alunos %}
+                <li class="list-group-item d-flex align-items-center py-3 border-0 border-bottom">
+                  <i class="bi bi-person-circle me-3 text-roxo fs-5"></i>
+                  <span class="fw-medium">{{ a.nome }}</span>
+                  {# Opcional: destaque para o próprio aluno na lista #}
+                  {% if a.nome == session.get('nome') %}
+                    <span class="badge bg-roxo-claro text-roxo ms-2">Você</span>
+                  {% endif %}
+                </li>
+                {% endfor %}
+              {% else %}
+                <li class="list-group-item text-center py-5 text-muted border-0">
+                  <i class="bi bi-info-circle d-block fs-2 mb-2"></i>
+                  Ainda não há outros alunos nesta turma.
+                </li>
+              {% endif %}
+            </ul>
 
-          <!-- Turma 3 -->
-          <div
-            class="list-group-item d-flex justify-content-between align-items-center"
-          >
-            <div>
-              <strong>Turma 1º C</strong><br />
-              <small class="text-muted">Química • 30 alunos</small>
+          {% else %}
+            <div class="text-center py-5">
+              <div class="mb-3">
+                <i class="bi bi-exclamation-octagon text-warning" style="font-size: 4rem;"></i>
+              </div>
+              <h5 class="fw-bold">Aguardando Vinculação</h5>
+              <p class="text-muted mx-auto" style="max-width: 400px;">
+                Você ainda não foi vinculado a nenhuma turma. 
+                Assim que um professor o adicionar, sua lista de colegas aparecerá aqui automaticamente.
+              </p>
+              <a href="{{ url_for('aluno.dashboard_aluno') }}" class="btn btn-outline-roxo mt-3">
+                Voltar ao Início
+              </a>
             </div>
-            <a href="#" class="btn btn-roxo btn-sm">
-              <i class="bi bi-box-arrow-in-right"></i> Entrar
-            </a>
-          </div>
+          {% endif %}
+
         </div>
       </div>
     </div>
@@ -147,11 +95,7 @@
     <footer class="text-center py-3 mt-5 border-top footer-roxo">
       <div>
         © <span id="ano"></span> WILLKADASA •
-        <a
-          href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL"
-          target="_blank"
-          class="text-decoration-none"
-        >
+        <a href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL" target="_blank" class="text-decoration-none">
           <i class="bi bi-github"></i> GitHub
         </a>
       </div>
@@ -160,7 +104,6 @@
     <script>
       document.getElementById("ano").innerText = new Date().getFullYear();
     </script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

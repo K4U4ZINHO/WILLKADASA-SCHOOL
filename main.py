@@ -11,6 +11,11 @@ from routes.config_conta_professor import config_conta_professor_bp
 from routes.criar_teste import criar_teste_bp
 from routes.criar_turma import criar_turma_bp
 from routes.ver_turma import ver_turma_bp    
+from routes.turma_professor import turma_professor_bp
+from routes.notas_gerais import notas_gerais_bp
+from routes.config_conta_aluno import config_conta_aluno_bp
+from routes.ver_turma_aluno import ver_turma_aluno_bp
+from routes.testes_pendentes_aluno import testes_pendentes_aluno_bp
 
 def create_app():
 
@@ -32,6 +37,12 @@ def create_app():
     app.register_blueprint(criar_teste_bp)
     app.register_blueprint(criar_turma_bp)
     app.register_blueprint(ver_turma_bp)
+    app.register_blueprint(turma_professor_bp)
+    app.register_blueprint(notas_gerais_bp)
+    app.register_blueprint(config_conta_aluno_bp)
+    app.register_blueprint(ver_turma_aluno_bp)
+    app.register_blueprint(testes_pendentes_aluno_bp)
+
 
     # inicializa socketio
     socketio.init_app(app)

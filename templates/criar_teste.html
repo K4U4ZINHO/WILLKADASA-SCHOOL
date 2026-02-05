@@ -5,65 +5,23 @@
     <title>WILLKADASA - Criador de Testes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-
-    <!-- Bootstrap Icons -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-
-    <!-- Custom CSS -->
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='criar_teste.css') }}"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='criar_teste.css') }}" />
   </head>
   <body>
     <nav class="navbar bg-roxo navbar-dark">
       <div class="container d-flex justify-content-between align-items-center">
-        <!-- voltar a página home_professor.html -->
-        <a
-          class="text-white fs-4"
-          href="{{ url_for('professor.dashboard_professor') }}"
-          role="button"
-        >
+        <a class="text-white fs-4" href="{{ url_for('professor.dashboard_professor') }}">
           <i class="bi bi-arrow-return-left"></i>
         </a>
-
-        <span class="navbar-brand mb-0 h1 flex-grow-1 text-center"
-          >WILLKADASA — Criador de Testes</span
-        >
-
+        <span class="navbar-brand mb-0 h1 flex-grow-1 text-center">WILLKADASA — Criador de Testes</span>
         <div class="dropdown">
-          <a
-            class="text-white fs-4"
-            href="#"
-            role="button"
-            data-bs-toggle="dropdown"
-          >
-            <i class="bi bi-person-circle"></i>
-          </a>
+          <a class="text-white fs-4" href="#" data-bs-toggle="dropdown"><i class="bi bi-person-circle"></i></a>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li>
-              <a
-                class="dropdown-item"
-                href="{{ url_for('config_conta_professor.config_conta') }}"
-                >Minha Conta</a
-              >
-            </li>
+            <li><a class="dropdown-item" href="{{ url_for('config_conta_professor.config_conta') }}">Gerir Conta</a></li>
             <li><hr class="dropdown-divider" /></li>
-            <li>
-              <a
-                class="dropdown-item text-danger"
-                href="{{ url_for('home.home') }}"
-                >Sair</a
-              >
-            </li>
+            <li><a class="dropdown-item text-danger" href="{{ url_for('home.home') }}">Sair</a></li>
           </ul>
         </div>
       </div>
@@ -72,24 +30,17 @@
     <div class="container my-5">
       <div class="card shadow-sm">
         <div class="card-body">
-          <h4 class="text-roxo mb-4">
-            <i class="bi bi-journal-text"></i>
-            Criar Novo Teste
-          </h4>
+          <h4 class="text-roxo mb-4"><i class="bi bi-journal-text"></i> Criar Novo Teste</h4>
 
           <div class="row g-3">
             <div class="col-md-4">
               <label class="form-label">Professor</label>
-              
-              <div class="form-control bg-light" id="nome_professor">
-                {{ nome_professor }}
-              </div>
+              <div class="form-control bg-light" id="nome_professor">{{ nome_professor }}</div>
             </div>
 
             <div class="col-md-4">
               <label class="form-label">Disciplina</label>
-        
-              <select class="form-select">
+              <select class="form-select" id="disciplina">
                   <option selected disabled>Escolha Uma Disciplina</option>
                   {% for d in disciplinas %}
                   <option>{{ d }}</option>
@@ -98,70 +49,205 @@
             </div>
 
             <div class="col-md-4">
-              <label class="form-label">Título do Teste</label>
-              <input
-                  type="text"
-                  class="form-control"
-                  value="{{ titulo_sugerido }}"
-              />
+              <label class="form-label">Modulo do Teste</label>
+              <input type="text" id="titulo_teste" class="form-control" value="{{ titulo_sugerido }}" />
             </div>
           </div>
 
-          <hr class="my-4" />
+          <div class="mt-4 mb-3">
+            <div id="listaQuestoes" class="q-nav"></div>
+          </div>
+
+          <div id="areaAlerta" class="mb-3"></div>
 
           <div class="border rounded p-3 mb-3">
-            <h5 class="text-roxo">Questão 1</h5>
-
+            <h5 class="text-roxo">Questão <span id="numeroQuestao">1</span></h5>
             <label class="form-label mt-2">Enunciado</label>
-            <textarea class="form-control" rows="2"></textarea>
+            <textarea id="enunciado" class="form-control" rows="2"></textarea>
 
             <div class="row g-2 mt-2">
-              <div class="col-md-6">
-                <input class="form-control" placeholder="Alternativa A" />
-              </div>
-              <div class="col-md-6">
-                <input class="form-control" placeholder="Alternativa B" />
-              </div>
-              <div class="col-md-6">
-                <input class="form-control" placeholder="Alternativa C" />
-              </div>
-              <div class="col-md-6">
-                <input class="form-control" placeholder="Alternativa D" />
-              </div>
+              <div class="col-md-6"><input id="a" class="form-control" placeholder="Alternativa A" /></div>
+              <div class="col-md-6"><input id="b" class="form-control" placeholder="Alternativa B" /></div>
+              <div class="col-md-6"><input id="c" class="form-control" placeholder="Alternativa C" /></div>
+              <div class="col-md-6"><input id="d" class="form-control" placeholder="Alternativa D" /></div>
             </div>
 
             <label class="form-label mt-3">Resposta Correta</label>
-            <select class="form-select">
-              <option>A</option>
-              <option>B</option>
-              <option>C</option>
-              <option>D</option>
+            <select id="correta" class="form-select">
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
             </select>
           </div>
 
-          <div class="d-flex gap-2">
-            <button class="btn btn-roxo">Adicionar Questão</button>
-            <button class="btn btn-roxo">Salvar Teste</button>
+          <div class="d-flex justify-content-end mt-4">
+            <button class="btn btn-outline-danger me-3" onclick="excluirQuestao()">
+              <i class="bi bi-trash"></i> Eliminar Questão
+            </button>
+            <button type="button" class="btn btn-roxo btn-lg" onclick="salvarTeste()">
+              <i class="bi bi-cloud-arrow-up"></i> Guardar Teste
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalSalvo" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+          <div class="modal-header bg-roxo text-white">
+            <h5 class="modal-title"><i class="bi bi-check-circle"></i> Sucesso</h5>
+          </div>
+          <div class="modal-body">
+            <p class="fs-5 mb-0">Teste guardado com sucesso! </p>
           </div>
         </div>
       </div>
     </div>
 
     <footer class="text-center py-3 mt-5 border-top footer-roxo">
-      <div>
-        © <span id="ano"></span> WILLKADASA •
-        <a
-          href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL"
-          target="_blank"
-          class="text-decoration-none"
-        >
-          <i class="bi bi-github"></i> GitHub
-        </a>
-        •
-      </div>
+      <div>© <span id="ano"></span> WILLKADASA • <a href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL" target="_blank" class="text-decoration-none"><i class="bi bi-github"></i> GitHub</a></div>
     </footer>
 
-    <!-- Bootstrap JS Bundle (necessário para dropdown funcionar) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      let questoes = [{}];
+      let atual = 0;
+      document.getElementById("ano").innerText = new Date().getFullYear();
+
+      function renderBotoes() {
+        const lista = document.getElementById("listaQuestoes");
+        lista.innerHTML = "";
+        questoes.forEach((_, i) => {
+          const btn = document.createElement("button");
+          btn.className = "q-btn" + (i === atual ? " active" : "");
+          btn.innerText = "Q" + (i + 1);
+          btn.onclick = () => carregarQuestao(i);
+          lista.appendChild(btn);
+        });
+        const plus = document.createElement("button");
+        plus.className = "q-btn plus";
+        plus.innerText = "+";
+        plus.onclick = novaQuestao;
+        lista.appendChild(plus);
+      }
+
+      function novaQuestao() {
+        salvarAtual();
+        questoes.push({});
+        atual = questoes.length - 1;
+        limparCampos();
+        renderBotoes();
+        document.getElementById("numeroQuestao").innerText = atual + 1;
+      }
+
+      function salvarAtual() {
+        questoes[atual] = {
+          enunciado: document.getElementById("enunciado").value,
+          a: document.getElementById("a").value,
+          b: document.getElementById("b").value,
+          c: document.getElementById("c").value,
+          d: document.getElementById("d").value,
+          correta: document.getElementById("correta").value
+        };
+      }
+
+      function carregarQuestao(i) {
+        salvarAtual();
+        atual = i;
+        const q = questoes[i];
+        document.getElementById("enunciado").value = q.enunciado || "";
+        document.getElementById("a").value = q.a || "";
+        document.getElementById("b").value = q.b || "";
+        document.getElementById("c").value = q.c || "";
+        document.getElementById("d").value = q.d || "";
+        document.getElementById("correta").value = q.correta || "A";
+        document.getElementById("numeroQuestao").innerText = i + 1;
+        renderBotoes();
+      }
+
+      function limparCampos() {
+        document.getElementById("enunciado").value = "";
+        document.getElementById("a").value = "";
+        document.getElementById("b").value = "";
+        document.getElementById("c").value = "";
+        document.getElementById("d").value = "";
+        document.getElementById("correta").value = "A";
+      }
+
+      function salvarTeste() {
+    salvarAtual(); // Garante que a questão que está na tela seja salva no array
+    
+    const titulo = document.getElementById("titulo_teste").value.trim();
+    const disciplina = document.getElementById("disciplina").value;
+
+    // Validação básica
+    if (!titulo || disciplina === "Escolha Uma Disciplina") {
+        mostrarAlerta("Preencha a Disciplina e o Título do Teste.");
+        return;
+    }
+
+    // Validação de questões vazias
+    const questoesValidas = questoes.every(q => q.enunciado && q.a && q.b);
+    if (!questoesValidas) {
+        mostrarAlerta("Certifique-se de que todas as questões possuem enunciado e pelo menos as alternativas A e B preenchidas.");
+        return;
+    }
+
+    const testeData = {
+        titulo: titulo,
+        disciplina: disciplina,
+        questoes: questoes
+        // Se tiver id_turma, adicione aqui: id_turma: "{{ id_turma }}"
+    };
+
+    fetch("{{ url_for('turma_professor.salvar_teste_completo') }}", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(testeData)
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Erro na resposta do servidor");
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            const modal = new bootstrap.Modal(document.getElementById("modalSalvo"));
+            modal.show();
+            setTimeout(() => {
+                window.location.href = "{{ url_for('professor.dashboard_professor') }}";
+            }, 1500);
+        } else {
+            mostrarAlerta("Erro ao salvar: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        mostrarAlerta("Erro de conexão ou erro interno no servidor.");
+    });
+}
+
+      function excluirQuestao() {
+        if (questoes.length === 1) {
+          mostrarAlerta("Você precisa ter pelo menos uma questão.");
+          return;
+        }
+        questoes.splice(atual, 1);
+        atual = Math.max(0, atual - 1);
+        carregarQuestao(atual);
+      }
+
+      function mostrarAlerta(msg) {
+        const area = document.getElementById("areaAlerta");
+        area.innerHTML = `
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Atenção:</strong> ${msg}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>`;
+      }
+
+      renderBotoes();
+    </script>
   </body>
 </html>

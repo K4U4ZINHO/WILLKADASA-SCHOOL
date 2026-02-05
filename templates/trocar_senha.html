@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<title>WILLKADASA — Trocar Senha</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='recuperar_senha.css') }}" />
+</head>
+
+<body>
+<nav class="navbar bg-roxo navbar-dark">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a class="text-white fs-4" href="{{ url_for('login.login_professor') }}">
+      <i class="bi bi-arrow-return-left"></i>
+    </a>
+    <span class="navbar-brand mb-0 h1 flex-grow-1 text-center">
+      WILLKADASA — Trocar Senha
+    </span>
+  </div>
+</nav>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h4 class="text-roxo text-center mb-4">
+            <i class="bi bi-lock-fill"></i> Criar Nova Senha
+          </h4>
+          <p class="text-muted text-center mb-4">
+            Insira sua nova senha e confirme-a abaixo.
+          </p>
+
+          <form id="trocarSenhaForm">
+            <div class="mb-3">
+              <label for="novaSenha" class="form-label">Nova Senha</label>
+              <input type="password" class="form-control" id="novaSenha" placeholder="Digite sua nova senha" required />
+            </div>
+            <div class="mb-3">
+              <label for="confirmarSenha" class="form-label">Confirmar Senha</label>
+              <input type="password" class="form-control" id="confirmarSenha" placeholder="Confirme sua senha" required />
+            </div>
+
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-roxo btn-lg">
+                <i class="bi bi-check-circle-fill"></i> Salvar Nova Senha
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="text-center py-3 mt-5 border-top footer-roxo">
+  <div>
+    © <span id="ano"></span> WILLKADASA •
+    <a href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL" target="_blank" class="text-decoration-none">
+      <i class="bi bi-github"></i> GitHub
+    </a> •
+  </div>
+</footer>
+
+<!-- Modal de aviso -->
+<div class="modal fade" id="modalAviso" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-roxo">
+      <div class="modal-header bg-roxo text-white">
+        <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill"></i> Aviso</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p id="mensagemAviso"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-roxo" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById("ano").innerText = new Date().getFullYear();
+
+const form = document.getElementById("trocarSenhaForm");
+
+function mostrarAviso(mensagem) {
+  document.getElementById("mensagemAviso").innerText = mensagem;
+  const modal = new bootstrap.Modal(document.getElementById("modalAviso"));
+  modal.show();
+}
+
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const novaSenha = document.getElementById("novaSenha").value.trim();
+  const confirmarSenha = document.getElementById("confirmarSenha").value.trim();
+
+  if (!novaSenha || !confirmarSenha) {
+    mostrarAviso(" Por favor, preencha todos os campos.");
+    return;
+  }
+
+  if (novaSenha !== confirmarSenha) {
+    mostrarAviso(" As senhas não coincidem. Tente novamente.");
+    return;
+  }
+
+  // Aqui você faria a requisição para o Flask salvar a nova senha
+  // Ex: fetch('/envEmail/salvar_senha', { method:'POST', body: formData })
+
+  mostrarAviso("Senha alterada com sucesso!");
+  form.reset();
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

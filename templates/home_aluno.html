@@ -4,152 +4,89 @@
     <meta charset="UTF-8" />
     <title>WILLKADASA - Painel do Aluno</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <!-- Bootstrap -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-
-    <!-- Fonte -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- CSS do projeto -->
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='login.css') }}"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}" />
   </head>
-
   <body>
-    <!-- NAVBAR -->
     <nav class="navbar bg-roxo navbar-dark">
       <div class="container d-flex justify-content-between align-items-center">
         <span class="navbar-brand mb-0 h1">WILLKADASA — ALUNO</span>
-
         <div class="dropdown">
-          <a
-            class="text-white fs-4"
-            href="#"
-            role="button"
-            data-bs-toggle="dropdown"
-          >
+          <a class="text-white fs-4" href="#" role="button" data-bs-toggle="dropdown">
             <i class="bi bi-person-circle"></i>
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li>
-              <a class="dropdown-item" href="{{ url_for('aluno.config_conta_aluno') }}">Minha Conta</a>
-            </li>
+            <li><a class="dropdown-item" href="{{ url_for('config_conta_aluno.config_conta_aluno') }}">Gerir Conta</a></li>
             <li><hr class="dropdown-divider" /></li>
-            <li>
-              <a
-                class="dropdown-item text-danger"
-                href="{{ url_for('home.home') }}"
-                >Sair</a
-              >
-            </li>
+            <li><a class="dropdown-item text-danger" href="{{ url_for('home.home') }}">Sair</a></li>
           </ul>
         </div>
       </div>
     </nav>
 
-    <!-- CONTEÚDO -->
     <div class="container my-5" style="min-height: 71vh">
-      <div class="card shadow-sm">
+      <div class="card shadow-sm border-0">
         <div class="card-body p-4">
-          <h4 class="text-center text-roxo mb-4">
+          <h4 class="text-center text-roxo mb-5 fw-bold">
             <i class="bi bi-mortarboard-fill"></i> Painel do Aluno
           </h4>
 
-          <div class="row g-4">
-            <!-- Ver Turma -->
+          <div class="row g-4 justify-content-center">
+            
             <div class="col-md-4">
-              <div class="card hover-card h-100 shadow-sm border-0">
-                <div class="card-body text-center py-4">
+              <div class="card hover-card h-100 shadow-sm border-0 text-center py-4">
+                <div class="card-body">
                   <i class="bi bi-people-fill fs-1 text-roxo mb-3"></i>
-                  <h5 class="text-roxo">Ver Turma</h5>
-                  <p class="text-muted">Veja informações da sua turma.</p>
-                  <a href="{{ url_for('aluno.ver_turma_aluno') }}" class="btn btn-roxo btn-sm">Acessar</a>
+                  <h5 class="text-roxo fw-bold">Minha Turma</h5>
+                  <p class="text-muted small">Veja seus colegas e informações da classe.</p>
+                  <a href="{{ url_for('ver_turma_aluno_sessao.ver_turma_aluno') }}" class="btn btn-roxo btn-sm px-4">Acessar</a>
                 </div>
               </div>
             </div>
 
-            <!-- Ver Notas -->
             <div class="col-md-4">
-              <div class="card hover-card h-100 shadow-sm border-0">
-                <div class="card-body text-center py-4">
-                  <i class="bi bi-bar-chart-fill fs-1 text-roxo mb-3"></i>
-                  <h5 class="text-roxo">Ver Notas</h5>
-                  <p class="text-muted">Consulte suas notas nos testes.</p>
-                  <a href="{{ url_for('aluno.ver_notas_aluno') }}" class="btn btn-roxo btn-sm">Ver Notas</a>
+              <div class="card hover-card h-100 shadow-sm border-0 text-center py-4">
+                <div class="card-body">
+                  <i class="bi bi-bar-chart-line fs-1 text-roxo mb-3"></i>
+                  <h5 class="text-roxo fw-bold">Minhas Notas</h5>
+                  <p class="text-muted small">Seu desempenho total nos testes.</p>
+                  {% if id_turma %}
+                    <a href="{{ url_for('aluno.ver_notas_aluno', id_turma=id_turma) }}" class="btn btn-roxo btn-sm px-4">Ver Notas</a>
+                  {% else %}
+                    <button class="btn btn-secondary btn-sm px-4" disabled title="Sem turma vinculada">Sem Turma</button>
+                  {% endif %}
                 </div>
               </div>
             </div>
 
-            <!-- Testes Não Realizados -->
             <div class="col-md-4">
-              <div class="card hover-card h-100 shadow-sm border-0">
-                <div class="card-body text-center py-4">
+              <div class="card hover-card h-100 shadow-sm border-0 text-center py-4">
+                <div class="card-body">
                   <i class="bi bi-journal-x fs-1 text-roxo mb-3"></i>
-                  <h5 class="text-roxo">Testes Pendentes</h5>
-                  <p class="text-muted">Realize testes que ainda não fez.</p>
-                  <a href="{{ url_for('aluno.testes_pendentes_aluno') }}" class="btn btn-roxo btn-sm">Ver Testes</a>
+                  <h5 class="text-roxo fw-bold">Testes Pendentes</h5>
+                  <p class="text-muted small">Realize testes que ainda não fez.</p>
+                  <a href="{{ url_for('testes_pendentes_aluno_sessao.testes_pendentes_aluno') }}" class="btn btn-roxo btn-sm px-4">Ver Testes</a>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </div>
     </div>
 
-    <!-- FOOTER -->
     <footer class="text-center py-3 mt-5 border-top footer-roxo">
       <div>
-        © <span id="ano"></span> WILLKADASA •
-        <a
-          href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL"
-          target="_blank"
-          class="text-decoration-none"
-        >
+        © <span id="ano"></span> WILLKADASA • 
+        <a href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL" target="_blank" class="text-decoration-none">
           <i class="bi bi-github"></i> GitHub
         </a>
       </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      document.getElementById("ano").textContent = new Date().getFullYear();
-    </script>
-  </body>
-</html>
-      </div>
-      </div>
-    </div>
-
-    <!-- FOOTER -->
-    <footer class="text-center py-3 mt-5 border-top footer-roxo">
-      <div>
-        © <span id="ano"></span> WILLKADASA •
-        <a
-          href="https://github.com/K4U4ZINHO/WILLKADASA-SCHOOL"
-          target="_blank"
-          class="text-decoration-none"
-        >
-          <i class="bi bi-github"></i> GitHub
-        </a>
-      </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      document.getElementById("ano").textContent = new Date().getFullYear();
-    </script>
+    <script>document.getElementById("ano").textContent = new Date().getFullYear();</script>
   </body>
 </html>
