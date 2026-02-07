@@ -76,47 +76,52 @@
 
     <div class="logo-willkadasa" style="min-height: 15vh">WILLKADASA</div>
 
-    <div class="container my-5" style="min-height: 63vh">
-      <div class="card shadow-sm">
-        <div class="card-body p-4">
-          <h4 class="text-center text-roxo mb-4">
-            <i class="bi bi-people-fill"></i> Alunos da Turma
-          </h4>
+   <div class="container my-5" style="min-height: 63vh">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h4 class="text-center text-roxo mb-4">
+          <i class="bi bi-people-fill"></i> Alunos da Turma
+        </h4>
 
-          <ul class="list-group">
-            <!-- Aluno 1 -->
-            <li
-              class="list-group-item d-flex justify-content-between align-items-center"
-            >
-              <a
-                href="#"
-                class="fw-bold text-roxo text-decoration-none"
-                data-bs-toggle="modal"
-                data-bs-target="#modalAluno1"
-              >
-                João Silva
-              </a>
-              <i class="bi bi-eye text-muted"></i>
-            </li>
+        <ul class="list-group">
+          {% for aluno in alunos %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span class="fw-bold text-roxo">{{ aluno.nome }}</span>
+            <button class="btn btn-outline-roxo btn-sm" data-bs-toggle="modal" data-bs-target="#modalAluno{{ aluno.id }}">
+              <i class="bi bi-eye"></i> Ver Notas
+            </button>
+          </li>
 
-            <!-- Aluno 2 -->
-            <li
-              class="list-group-item d-flex justify-content-between align-items-center"
-            >
-              <a
-                href="#"
-                class="fw-bold text-roxo text-decoration-none"
-                data-bs-toggle="modal"
-                data-bs-target="#modalAluno2"
-              >
-                Maria Souza
-              </a>
-              <i class="bi bi-eye text-muted"></i>
-            </li>
-          </ul>
-        </div>
+          <div class="modal fade" id="modalAluno{{ aluno.id }}" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header bg-roxo text-white">
+                  <h5 class="modal-title"><i class="bi bi-person"></i> {{ aluno.nome }}</h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <ul class="list-group list-group-flush">
+                    {% if notas_por_aluno[aluno.id] %}
+                      {% for nota in notas_por_aluno[aluno.id] %}
+                      <li class="list-group-item d-flex justify-content-between">
+                        {{ nota.titulo }} <strong>{{ nota.pontuacao_total }}</strong>
+                      </li>
+                      {% endfor %}
+                    {% else %}
+                      <li class="list-group-item text-center text-muted">Nenhuma nota registrada.</li>
+                    {% endif %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <li class="list-group-item text-center">Nenhum aluno nesta turma.</li>
+          {% endfor %}
+        </ul>
       </div>
     </div>
+  </div>
 
     <!-- Modal Aluno 1 -->
     <div class="modal fade" id="modalAluno1" tabindex="-1">

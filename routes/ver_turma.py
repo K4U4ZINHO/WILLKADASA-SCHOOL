@@ -39,10 +39,10 @@ def excluir_turma(id_turma):
             cursor.execute("DELETE FROM turmas WHERE id = ?", (id_turma,))
             
             conn.commit()
-            flash("Turma removida com sucesso!", "success")
+            
     except Exception as e:
         print(f"Erro ao excluir: {e}")
-        flash("Erro ao tentar excluir a turma.", "danger")
+        
 
     # Agora o redirecionamento vai funcionar porque a rota acima existe!
     return redirect(url_for("ver_turma.ver_turma"))

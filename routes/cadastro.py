@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 
 cadastro_bp = Blueprint("cadastro", __name__, url_prefix="/cadastro")
 
-SENHA_SECRETA_PROFESSOR = "1234"
+SENHA_SECRETA_PROFESSOR = "2026professor"
 
 def criar_hash_senha(senha):
     return hashlib.sha256(senha.encode("utf-8")).hexdigest()

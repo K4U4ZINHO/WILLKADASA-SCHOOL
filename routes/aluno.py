@@ -137,3 +137,7 @@ def realizar_teste(id_exame):
     conn.close()
 
     return render_template("realizar_teste.html", exame=exame, questoes=questoes, id_exame=id_exame)
+
+@aluno_bp.route("/recuperar_senha")
+def recuperar_senha():
+    return render_template("recuperar_senha.html")

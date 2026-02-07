@@ -35,7 +35,7 @@ def criar_turma():
 
             conn.commit()
 
-        flash("Turma criada com sucesso!", "success")
+        
         return redirect(url_for("professor.dashboard_professor"))
 
     # GET → carregar alunos sem turma
