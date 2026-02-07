@@ -1,7 +1,7 @@
 import psycopg2
 
 # COLE SUA URL COMPLETA ENTRE AS ASPAS ABAIXO
-DATABASE_URL = "SUA_URL_EXTERNAL_AQUI"
+DATABASE_URL = "postgresql://willkadasa_db_user:HZSUppbwngAVU3qX88B7bgJrOobyMYzd@dpg-d63lqc24d50c73dqq6cg-a.frankfurt-postgres.render.com/willkadasa_db"
 
 def inicializar_banco():
     try:
