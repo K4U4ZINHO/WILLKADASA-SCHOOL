@@ -1,5 +1,4 @@
 from flask import Flask
-import os
 from extensions import socketio
 # import  willkadasa_db
 from routes.home import home_bp
@@ -16,7 +15,13 @@ from routes.notas_gerais import notas_gerais_bp
 from routes.config_conta_aluno import config_conta_aluno_bp
 from routes.ver_turma_aluno import ver_turma_aluno_bp
 from routes.testes_pendentes_aluno import testes_pendentes_aluno_bp
+import os
+import psycopg2
 
+def get_db_connection():
+    # Ele vai ler a URL que você configurou no Passo 4
+    url = os.environ.get('DATABASE_URL')
+    return psycopg2.connect(url, sslmode='require')
 def create_app():
 
     app = Flask(__name__)
