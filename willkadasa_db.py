@@ -1,125 +1,254 @@
-import sqlite3
+import psycopg2
 import hashlib
 
-def criar_hash_senha(senha):
-    return hashlib.sha256(senha.encode("utf-8")).hexdigest()
+# Sua URL do Render (já está correta)
+DATABASE_URL = "postgresql://willkadasa_db_user:HZSUppbwngAVU3qX88B7bgJrOobyMYzd@dpg-d63lqc24d50c73dqq6cg-a.frankfurt-postgres.render.com/willkadasa_db"
 
-conn = sqlite3.connect("willkadasa.db")
-conn.execute("PRAGMA foreign_keys = ON;")
-cursor = conn.cursor()
+def inicializar_banco():
+    try:
+        # CONEXÃO COM POSTGRESQL
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cursor = conn.cursor()
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS email (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT NOT NULL,
-    senha_hash TEXT NOT NULL,
-    tipo TEXT NOT NULL,
-    email_principal TEXT UNIQUE NOT NULL
-)
-""")
+        # Comandos adaptados para PostgreSQL (SERIAL em vez de AUTOINCREMENT)
+        comandos = [
+            """
+            CREATE TABLE IF NOT EXISTS email (
+                id SERIAL PRIMARY KEY,
+                nome TEXT NOT NULL,
+                senha_hash TEXT NOT NULL,
+                tipo TEXT NOT NULL,
+                email_principal TEXT UNIQUE NOT NULL
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS questoes (
+                id SERIAL PRIMARY KEY,
+                enunciado TEXT NOT NULL,
+                tipo TEXT,
+                resposta_correta TEXT
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS disciplinas (
+                id SERIAL PRIMARY KEY,
+                nome TEXT NOT NULL
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS turmas (
+                id SERIAL PRIMARY KEY,
+                nome TEXT NOT NULL,
+                ano INTEGER NOT NULL,
+                curso TEXT NOT NULL
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS professores (
+                id SERIAL PRIMARY KEY,
+                nome TEXT NOT NULL,
+                idade INTEGER,
+                numero TEXT,
+                email_id INTEGER UNIQUE REFERENCES email(id) ON DELETE SET NULL,
+                data_nascimento TEXT,
+                telefone TEXT,
+                email_secundario TEXT,
+                disciplinas TEXT
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS alunos (
+                id SERIAL PRIMARY KEY,
+                skwd_aluno TEXT UNIQUE NOT NULL,
+                nome TEXT NOT NULL,
+                turma_id INTEGER REFERENCES turmas(id) ON DELETE SET NULL,
+                email_id INTEGER UNIQUE REFERENCES email(id) ON DELETE SET NULL
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS exames (
+                id SERIAL PRIMARY KEY,
+                titulo TEXT NOT NULL,
+                data_hora_inicio TEXT NOT NULL,
+                duracao_minutos INTEGER NOT NULL CHECK (duracao_minutos > 0),
+                criado_por INTEGER REFERENCES professores(id) ON DELETE SET NULL
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS exame_questoes (
+                id SERIAL PRIMARY KEY,
+                exame_id INTEGER NOT NULL REFERENCES exames(id) ON DELETE CASCADE,
+                questao_id INTEGER NOT NULL REFERENCES questoes(id) ON DELETE CASCADE,
+                pontuacao REAL NOT NULL,
+                ordem INTEGER NOT NULL
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS submissoes_exame (
+                id SERIAL PRIMARY KEY,
+                exame_id INTEGER NOT NULL REFERENCES exames(id) ON DELETE CASCADE,
+                aluno_id INTEGER NOT NULL REFERENCES alunos(id) ON DELETE CASCADE,
+                data_submissao TEXT,
+                pontuacao_total REAL,
+                estado TEXT
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS respostas (
+                id SERIAL PRIMARY KEY,
+                submissao_id INTEGER NOT NULL REFERENCES submissoes_exame(id) ON DELETE CASCADE,
+                questao_id INTEGER NOT NULL REFERENCES questoes(id) ON DELETE CASCADE,
+                resposta_dada TEXT,
+                pontuacao_atribuida REAL
+            )
+            """
+        ]
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS questoes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    enunciado TEXT NOT NULL,
-    tipo TEXT, -- 'multipla_escolha', 'texto', etc
-    resposta_correta TEXT
-)
-""")
+        for comando in comandos:
+            cursor.execute(comando)
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS disciplinas (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT NOT NULL
-)
-""")
+        conn.commit()
+        print("🚀 Banco de dados PostgreSQL criado com sucesso no Render!")
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS turmas (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT NOT NULL,
-    ano INTEGER NOT NULL,
-    curso TEXT NOT NULL
-)
-""")
+    except Exception as e:
+        print(f"❌ Erro ao criar o banco: {e}")
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS professores (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT NOT NULL,
-    idade INTEGER,
-    numero TEXT,
-    email_id INTEGER UNIQUE,
-    data_nascimento TEXT,
-    telefone TEXT,
-    email_secundario TEXT,
-    disciplinas TEXT,
-    FOREIGN KEY (email_id) REFERENCES email(id) ON DELETE SET NULL
-)
-""")
+if __name__ == "__main__":
+    inicializar_banco()
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS alunos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    skwd_aluno TEXT UNIQUE NOT NULL,
-    nome TEXT NOT NULL,
-    turma_id INTEGER,
-    email_id INTEGER UNIQUE,
-    FOREIGN KEY (turma_id) REFERENCES turmas(id) ON DELETE SET NULL,
-    FOREIGN KEY (email_id) REFERENCES email(id) ON DELETE SET NULL
-)
-""")
+# import sqlite3
+# import hashlib
+# import psycopg2
+
+# # COLE SUA URL COMPLETA ENTRE AS ASPAS ABAIXO
+# DATABASE_URL = "postgresql://willkadasa_db_user:HZSUppbwngAVU3qX88B7bgJrOobyMYzd@dpg-d63lqc24d50c73dqq6cg-a.frankfurt-postgres.render.com/willkadasa_db"
 
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS exames (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    titulo TEXT NOT NULL,
-    data_hora_inicio TEXT NOT NULL,
-    duracao_minutos INTEGER NOT NULL CHECK (duracao_minutos > 0),
-    criado_por INTEGER,
-    FOREIGN KEY (criado_por) REFERENCES professores(id) ON DELETE SET NULL
-)
-""")
+# def criar_hash_senha(senha):
+#     return hashlib.sha256(senha.encode("utf-8")).hexdigest()
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS exame_questoes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    exame_id INTEGER NOT NULL,
-    questao_id INTEGER NOT NULL,
-    pontuacao REAL NOT NULL,
-    ordem INTEGER NOT NULL,
-    FOREIGN KEY (exame_id) REFERENCES exames(id) ON DELETE CASCADE,
-    FOREIGN KEY (questao_id) REFERENCES questoes(id) ON DELETE CASCADE
-)
-""")
+# conn = sqlite3.connect("willkadasa.db")
+# conn.execute("PRAGMA foreign_keys = ON;")
+# cursor = conn.cursor()
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS submissoes_exame (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    exame_id INTEGER NOT NULL,
-    aluno_id INTEGER NOT NULL,
-    data_submissao TEXT,
-    pontuacao_total REAL,
-    estado TEXT,
-    FOREIGN KEY (exame_id) REFERENCES exames(id) ON DELETE CASCADE,
-    FOREIGN KEY (aluno_id) REFERENCES alunos(id) ON DELETE CASCADE
-)
-""")
+# cursor.execute("""
+# CREATE TABLE IF NOT EXISTS email (
+#     id INTEGER PRIMARY KEY AUTOINCREMENT,
+#     nome TEXT NOT NULL,
+#     senha_hash TEXT NOT NULL,
+#     tipo TEXT NOT NULL,
+#     email_principal TEXT UNIQUE NOT NULL
+# )
+# """)
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS respostas (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    submissao_id INTEGER NOT NULL,
-    questao_id INTEGER NOT NULL,
-    resposta_dada TEXT,
-    pontuacao_atribuida REAL,
-    FOREIGN KEY (submissao_id) REFERENCES submissoes_exame(id) ON DELETE CASCADE,
-    FOREIGN KEY (questao_id) REFERENCES questoes(id) ON DELETE CASCADE
-)
-""")
+# cursor.execute("""
+# CREATE TABLE IF NOT EXISTS questoes (
+#     id INTEGER PRIMARY KEY AUTOINCREMENT,
+#     enunciado TEXT NOT NULL,
+#     tipo TEXT, -- 'multipla_escolha', 'texto', etc
+#     resposta_correta TEXT
+# )
+# """)
 
-conn.commit()
-conn.close()
+# cursor.execute("""
+# CREATE TABLE IF NOT EXISTS disciplinas (
+#     id INTEGER PRIMARY KEY AUTOINCREMENT,
+#     nome TEXT NOT NULL
+# )
+# """)
 
-print("Banco criado com sucesso!")
+# cursor.execute("""
+# CREATE TABLE IF NOT EXISTS turmas (
+#     id INTEGER PRIMARY KEY AUTOINCREMENT,
+#     nome TEXT NOT NULL,
+#     ano INTEGER NOT NULL,
+#     curso TEXT NOT NULL
+# )
+# """)
+
+# cursor.execute("""
+# CREATE TABLE IF NOT EXISTS professores (
+#     id INTEGER PRIMARY KEY AUTOINCREMENT,
+#     nome TEXT NOT NULL,
+#     idade INTEGER,
+#     numero TEXT,
+#     email_id INTEGER UNIQUE,
+#     data_nascimento TEXT,
+#     telefone TEXT,
+#     email_secundario TEXT,
+#     disciplinas TEXT,
+#     FOREIGN KEY (email_id) REFERENCES email(id) ON DELETE SET NULL
+# )
+# """)
+
+# cursor.execute("""
+# CREATE TABLE IF NOT EXISTS alunos (
+#     id INTEGER PRIMARY KEY AUTOINCREMENT,
+#     skwd_aluno TEXT UNIQUE NOT NULL,
+#     nome TEXT NOT NULL,
+#     turma_id INTEGER,
+#     email_id INTEGER UNIQUE,
+#     FOREIGN KEY (turma_id) REFERENCES turmas(id) ON DELETE SET NULL,
+#     FOREIGN KEY (email_id) REFERENCES email(id) ON DELETE SET NULL
+# )
+# """)
+
+
+# cursor.execute("""
+# CREATE TABLE IF NOT EXISTS exames (
+#     id INTEGER PRIMARY KEY AUTOINCREMENT,
+#     titulo TEXT NOT NULL,
+#     data_hora_inicio TEXT NOT NULL,
+#     duracao_minutos INTEGER NOT NULL CHECK (duracao_minutos > 0),
+#     criado_por INTEGER,
+#     FOREIGN KEY (criado_por) REFERENCES professores(id) ON DELETE SET NULL
+# )
+# """)
+
+# cursor.execute("""
+# CREATE TABLE IF NOT EXISTS exame_questoes (
+#     id INTEGER PRIMARY KEY AUTOINCREMENT,
+#     exame_id INTEGER NOT NULL,
+#     questao_id INTEGER NOT NULL,
+#     pontuacao REAL NOT NULL,
+#     ordem INTEGER NOT NULL,
+#     FOREIGN KEY (exame_id) REFERENCES exames(id) ON DELETE CASCADE,
+#     FOREIGN KEY (questao_id) REFERENCES questoes(id) ON DELETE CASCADE
+# )
+# """)
+
+# cursor.execute("""
+# CREATE TABLE IF NOT EXISTS submissoes_exame (
+#     id INTEGER PRIMARY KEY AUTOINCREMENT,
+#     exame_id INTEGER NOT NULL,
+#     aluno_id INTEGER NOT NULL,
+#     data_submissao TEXT,
+#     pontuacao_total REAL,
+#     estado TEXT,
+#     FOREIGN KEY (exame_id) REFERENCES exames(id) ON DELETE CASCADE,
+#     FOREIGN KEY (aluno_id) REFERENCES alunos(id) ON DELETE CASCADE
+# )
+# """)
+
+# cursor.execute("""
+# CREATE TABLE IF NOT EXISTS respostas (
+#     id INTEGER PRIMARY KEY AUTOINCREMENT,
+#     submissao_id INTEGER NOT NULL,
+#     questao_id INTEGER NOT NULL,
+#     resposta_dada TEXT,
+#     pontuacao_atribuida REAL,
+#     FOREIGN KEY (submissao_id) REFERENCES submissoes_exame(id) ON DELETE CASCADE,
+#     FOREIGN KEY (questao_id) REFERENCES questoes(id) ON DELETE CASCADE
+# )
+# """)
+
+# conn.commit()
+# conn.close()
+
+# print("Banco criado com sucesso!")
+
+
