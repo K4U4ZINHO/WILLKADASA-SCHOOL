@@ -108,10 +108,10 @@ def inicializar_banco():
             cursor.execute(comando)
 
         conn.commit()
-        print("🚀 Banco de dados PostgreSQL criado com sucesso no Render!")
+        print("Banco de dados PostgreSQL criado com sucesso!")
 
     except Exception as e:
-        print(f"❌ Erro ao criar o banco: {e}")
+        print(f"Erro ao criar o banco: {e}")
     finally:
         if conn:
             cursor.close()
