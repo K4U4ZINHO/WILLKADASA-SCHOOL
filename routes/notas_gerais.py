@@ -1,50 +1,34 @@
 from flask import Blueprint, render_template, session, redirect, url_for
-import sqlite3
+# Importamos a função de consulta híbrida
+from willkadasa_db import db_query
 
 notas_gerais_bp = Blueprint("notas_gerais", __name__, url_prefix="/notas")
 
-def get_db_connection():
-    conn = sqlite3.connect("willkadasa.db")
-    conn.row_factory = sqlite3.Row 
-    return conn
-
 @notas_gerais_bp.route("/notas_gerais/<int:id_turma>")
 def notas_gerais(id_turma):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    # 1. Busca alunos (garantindo que pegamos o email_id)
-    cursor.execute("""
+    # 1. Busca alunos da turma usando db_query
+    alunos = db_query("""
         SELECT id, nome, email_id 
         FROM alunos 
         WHERE turma_id = ?
     """, (id_turma,))
-    alunos = cursor.fetchall()
 
     notas_por_aluno = {}
 
     for aluno in alunos:
-        # 2. Busca as notas
-        # DICA: Verifique se o nome da tabela é 'submissoes_exame' ou 'submissao_exame'
-        cursor.execute("""
+        # 2. Busca as notas de cada aluno
+        # A função db_query já retorna uma lista de dicionários por padrão
+        resultado = db_query("""
             SELECT e.titulo, COALESCE(s.pontuacao_total, 0) as nota
             FROM submissoes_exame s
             JOIN exames e ON s.exame_id = e.id
             WHERE s.aluno_id = ?
         """, (aluno['id'],))
         
-        # ... dentro do loop for aluno in alunos:
-        
-        # ... dentro do loop for aluno in alunos:
-        resultado = cursor.fetchall()
-        
-        # MUDANÇA AQUI: Usar o ID do aluno como chave (convertido para string)
-        notas_por_aluno[str(aluno['id'])] = [dict(row) for row in resultado]
-        # MUDANÇA AQUI: Usar o ID do aluno como chave (convertido para string)
-    conn.close()
+        # Armazenamos usando o ID do aluno como chave (convertido para string para o Jinja2)
+        notas_por_aluno[str(aluno['id'])] = resultado
     
-    # DEBUG: Olhe o seu terminal do VS Code quando abrir a página. 
-    # Se aparecer {}, o problema está no banco de dados (aluno_id não bate).
+    # DEBUG para o terminal
     print(f"DEBUG NOTAS: {notas_por_aluno}")
     
     return render_template("notas_gerais.html", 
