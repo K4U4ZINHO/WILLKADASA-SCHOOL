@@ -71,7 +71,8 @@ def inicializar_banco():
                 titulo TEXT NOT NULL,
                 data_hora_inicio TEXT NOT NULL,
                 duracao_minutos INTEGER NOT NULL CHECK (duracao_minutos > 0),
-                criado_por INTEGER REFERENCES professores(id) ON DELETE SET NULL
+                criado_por INTEGER REFERENCES professores(id) ON DELETE SET NULL,
+                turma_id INTEGER REFERENCES turmas(id) ON DELETE SET NULL  
             )
             """,
             """
