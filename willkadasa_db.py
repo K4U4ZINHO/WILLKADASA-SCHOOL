@@ -178,4 +178,4 @@ def inicializar_banco():
         cur.close()
     
     conn.close()
-    print("Banco de Dados (Híbrido) sincronizado com colunas de alternativas!")
+    print("Banco de Dados (Híbrido) sincronizado com colunas de alternativas!")##
