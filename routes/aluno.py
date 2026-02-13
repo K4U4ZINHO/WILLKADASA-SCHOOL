@@ -47,6 +47,7 @@ def ver_notas_aluno(id_turma):
     return render_template("ver_notas_aluno.html", notas=notas, id_turma=id_turma)
 
 # --- REALIZAR TESTE ---
+# --- REALIZAR TESTE ---
 @aluno_bp.route("/realizar_teste/<int:id_exame>", methods=["GET", "POST"])
 def realizar_teste(id_exame):
     email = session.get("email")
@@ -67,15 +68,11 @@ def realizar_teste(id_exame):
         """, (id_exame,))
 
         # 3. Criar a submissão inicial
-        # Nota: O PostgreSQL não usa datetime('now'), ele usa CURRENT_TIMESTAMP
-        # O db_execute vai cuidar disso se você ajustou o willkadasa_db
         db_execute("""
             INSERT INTO submissoes_exame (exame_id, aluno_id, data_submissao, estado)
             VALUES (?, ?, CURRENT_TIMESTAMP, 'corrigido')
         """, (id_exame, aluno_id))
         
-        # Pegamos o ID da última submissão inserida
-        # No Postgres, isso costuma ser feito com RETURNING id, mas para simplificar:
         last_sub = db_query("SELECT id FROM submissoes_exame WHERE aluno_id = ? ORDER BY id DESC", (aluno_id,), one=True)
         submissao_id = last_sub['id']
 
@@ -90,7 +87,6 @@ def realizar_teste(id_exame):
                 pontuacao_atribuida = q['pontuacao']
                 pontuacao_total_aluno += pontuacao_atribuida
 
-            # Salvar resposta individual
             db_execute("""
                 INSERT INTO respostas (submissao_id, questao_id, resposta_dada, pontuacao_atribuida)
                 VALUES (?, ?, ?, ?)
@@ -102,10 +98,12 @@ def realizar_teste(id_exame):
         flash(f"Teste enviado! Sua nota foi: {pontuacao_total_aluno}", "success")
         return redirect(url_for("testes_pendentes_aluno_sessao.testes_pendentes_aluno"))
 
-    # --- LÓGICA DO GET (Carregar Questões) ---
+    # --- LÓGICA DO GET (CORRIGIDA AQUI) ---
     exame = db_query("SELECT titulo FROM exames WHERE id = ?", (id_exame,), one=True)
+    
+    # ADICIONAMOS AS COLUNAS DAS OPÇÕES NA QUERY ABAIXO:
     questoes = db_query("""
-        SELECT q.id, q.enunciado, q.tipo 
+        SELECT q.id, q.enunciado, q.tipo, q.opcao_a, q.opcao_b, q.opcao_c, q.opcao_d 
         FROM questoes q
         JOIN exame_questoes eq ON q.id = eq.questao_id
         WHERE eq.exame_id = ?
@@ -113,7 +111,6 @@ def realizar_teste(id_exame):
     """, (id_exame,))
 
     return render_template("realizar_teste.html", exame=exame, questoes=questoes, id_exame=id_exame)
-
 @aluno_bp.route("/recuperar_senha")
 def recuperar_senha():
     return render_template("recuperar_senha.html")

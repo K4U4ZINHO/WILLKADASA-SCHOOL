@@ -82,11 +82,8 @@
           </div>
 
           <div class="d-flex justify-content-end mt-4">
-            <button class="btn btn-outline-danger me-3" onclick="excluirQuestao()">
-              <i class="bi bi-trash"></i> Eliminar Questão
-            </button>
             <button type="button" class="btn btn-roxo btn-lg" onclick="salvarTeste()">
-              <i class="bi bi-cloud-arrow-up"></i> Guardar Teste
+                <i class="bi bi-cloud-arrow-up"></i> Guardar Teste
             </button>
           </div>
         </div>
@@ -111,49 +108,60 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      let questoes = [{}];
-      let atual = 0;
-      document.getElementById("ano").innerText = new Date().getFullYear();
+<script>
+    // 1. Captura as variáveis do Flask/Jinja logo no início
+    // Isso evita que o JS fique "sujo" com código em vermelho
+    // Usamos aspas para o editor achar que é uma string, o JSON.parse resolve depois
+const ID_TURMA = JSON.parse("{{ id_turma if id_turma else 'null' }}");
+// CORRETO:
+const URL_SALVAR = "{{ url_for('criar_teste.salvar_teste_no_db') }}";
+const URL_DASHBOARD = "{{ url_for('professor.dashboard_professor') }}";
+    // Se id_turma existir, gera a URL da turma, senão nulo
+    // Usamos uma string vazia como padrão e deixamos o Jinja preencher o valor
+const URL_TURMA = "{{ url_for('turma_professor.turma_professor', id_turma=id_turma) if id_turma else '' }}" || null;
 
-      function renderBotoes() {
+    let questoes = [{}];
+    let atual = 0;
+    document.getElementById("ano").innerText = new Date().getFullYear();
+
+    function renderBotoes() {
         const lista = document.getElementById("listaQuestoes");
         lista.innerHTML = "";
         questoes.forEach((_, i) => {
-          const btn = document.createElement("button");
-          btn.className = "q-btn" + (i === atual ? " active" : "");
-          btn.innerText = "Q" + (i + 1);
-          btn.onclick = () => carregarQuestao(i);
-          lista.appendChild(btn);
+            const btn = document.createElement("button");
+            btn.className = "q-btn" + (i === atual ? " active" : "");
+            btn.innerText = "Q" + (i + 1);
+            btn.onclick = () => carregarQuestao(i);
+            lista.appendChild(btn);
         });
         const plus = document.createElement("button");
         plus.className = "q-btn plus";
         plus.innerText = "+";
         plus.onclick = novaQuestao;
         lista.appendChild(plus);
-      }
+    }
 
-      function novaQuestao() {
+    function novaQuestao() {
         salvarAtual();
         questoes.push({});
         atual = questoes.length - 1;
         limparCampos();
         renderBotoes();
         document.getElementById("numeroQuestao").innerText = atual + 1;
-      }
+    }
 
-      function salvarAtual() {
+    function salvarAtual() {
         questoes[atual] = {
-          enunciado: document.getElementById("enunciado").value,
-          a: document.getElementById("a").value,
-          b: document.getElementById("b").value,
-          c: document.getElementById("c").value,
-          d: document.getElementById("d").value,
-          correta: document.getElementById("correta").value
+            enunciado: document.getElementById("enunciado").value,
+            a: document.getElementById("a").value,
+            b: document.getElementById("b").value,
+            c: document.getElementById("c").value,
+            d: document.getElementById("d").value,
+            correta: document.getElementById("correta").value
         };
-      }
+    }
 
-      function carregarQuestao(i) {
+    function carregarQuestao(i) {
         salvarAtual();
         atual = i;
         const q = questoes[i];
@@ -165,89 +173,86 @@
         document.getElementById("correta").value = q.correta || "A";
         document.getElementById("numeroQuestao").innerText = i + 1;
         renderBotoes();
-      }
+    }
 
-      function limparCampos() {
+    function limparCampos() {
         document.getElementById("enunciado").value = "";
         document.getElementById("a").value = "";
         document.getElementById("b").value = "";
         document.getElementById("c").value = "";
         document.getElementById("d").value = "";
         document.getElementById("correta").value = "A";
-      }
-
-      function salvarTeste() {
-    salvarAtual(); // Garante que a questão que está na tela seja salva no array
-    
-    const titulo = document.getElementById("titulo_teste").value.trim();
-    const disciplina = document.getElementById("disciplina").value;
-
-    // Validação básica
-    if (!titulo || disciplina === "Escolha Uma Disciplina") {
-        mostrarAlerta("Preencha a Disciplina e o Título do Teste.");
-        return;
     }
 
-    // Validação de questões vazias
-    const questoesValidas = questoes.every(q => q.enunciado && q.a && q.b);
-    if (!questoesValidas) {
-        mostrarAlerta("Certifique-se de que todas as questões possuem enunciado e pelo menos as alternativas A e B preenchidas.");
-        return;
-    }
+    function salvarTeste() {
+        salvarAtual();
 
-    const testeData = {
-        titulo: titulo,
-        disciplina: disciplina,
-        questoes: questoes
-        // Se tiver id_turma, adicione aqui: id_turma: "{{ id_turma }}"
-    };
+        const titulo = document.getElementById("titulo_teste").value.trim();
+        const disciplina = document.getElementById("disciplina").value;
 
-    fetch("{{ url_for('turma_professor.salvar_teste_completo') }}", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(testeData)
-    })
-    .then(response => {
-        if (!response.ok) throw new Error("Erro na resposta do servidor");
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            const modal = new bootstrap.Modal(document.getElementById("modalSalvo"));
-            modal.show();
-            setTimeout(() => {
-                window.location.href = "{{ url_for('professor.dashboard_professor') }}";
-            }, 1500);
-        } else {
-            mostrarAlerta("Erro ao salvar: " + data.message);
+        if (!titulo || disciplina === "Escolha Uma Disciplina") {
+            mostrarAlerta("Preencha a Disciplina e o Título do Teste.");
+            return;
         }
-    })
-    .catch(error => {
-        console.error(error);
-        mostrarAlerta("Erro de conexão ou erro interno no servidor.");
-    });
-}
 
-      function excluirQuestao() {
+        const questoesValidas = questoes.every(q => q.enunciado && q.a && q.b);
+        if (!questoesValidas) {
+            mostrarAlerta("Certifique-se de que todas as questões possuem enunciado e as alternativas A e B.");
+            return;
+        }
+
+        const testeData = {
+            titulo: titulo,
+            disciplina: disciplina,
+            questoes: questoes,
+            id_turma: ID_TURMA
+        };
+
+        fetch(URL_SALVAR, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(testeData)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Erro no servidor");
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                const modal = new bootstrap.Modal(document.getElementById("modalSalvo"));
+                modal.show();
+                setTimeout(() => {
+                    // Redireciona usando as variáveis que criamos no topo
+                    window.location.href = URL_TURMA ? URL_TURMA : URL_DASHBOARD;
+                }, 1500);
+            } else {
+                mostrarAlerta("Erro ao salvar: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Erro:", error);
+            mostrarAlerta("Erro de conexão com o servidor.");
+        });
+    }
+
+    function excluirQuestao() {
         if (questoes.length === 1) {
-          mostrarAlerta("Você precisa ter pelo menos uma questão.");
-          return;
+            mostrarAlerta("Você precisa ter pelo menos uma questão.");
+            return;
         }
         questoes.splice(atual, 1);
         atual = Math.max(0, atual - 1);
         carregarQuestao(atual);
-      }
+    }
 
-      function mostrarAlerta(msg) {
+    function mostrarAlerta(msg) {
         const area = document.getElementById("areaAlerta");
         area.innerHTML = `
-          <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <strong>Atenção:</strong> ${msg}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>`;
-      }
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Atenção:</strong> ${msg}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>`;
+    }
 
-      renderBotoes();
-    </script>
-  </body>
-</html>
+    renderBotoes();
+</script>

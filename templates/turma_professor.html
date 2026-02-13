@@ -183,58 +183,87 @@
       </div>
     </div>
     <div class="modal fade" id="modalGerenciarTeste" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
+      <div class="modal-dialog modal-dialog-centered modal-xl"> <div class="modal-content">
           <div class="modal-header bg-roxo text-white">
             <h5 class="modal-title"><i class="bi bi-file-earmark-plus"></i> Gerenciar Testes</h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
-            <div class="row">
-              <div class="col-md-5 border-end text-center p-3">
-                <h6 class="text-roxo mb-3">Criar Novo Teste</h6>
-                <p class="small text-muted">Utilize o editor completo para criar questões e salvar o teste.</p>
-                <a href="{{ url_for('criar_teste.criar_teste') }}" class="btn btn-roxo btn-sm w-100">
-                  <i class="bi bi-pencil-square"></i> Abrir Editor
+            <div class="row g-3">
+              
+              <div class="col-md-3 border-end text-center p-3">
+                <h6 class="text-roxo fw-bold mb-3">Criar Novo</h6>
+                <p class="small text-muted mb-4">Crie um teste do zero.</p>
+                <a href="{{ url_for('criar_teste.salvar_teste_no_db') }}" class="btn btn-roxo w-100 mb-3 shadow-sm">
+                  <i class="bi bi-pencil-square"></i> Criar Editor
                 </a>
               </div>
 
-              <div class="col-md-7 p-3">
-                <h6 class="text-roxo mb-3">Seus Testes Criados</h6>
-                <div class="border rounded p-2" style="max-height: 200px; overflow-y: auto;">
-                  <ul class="list-group list-group-flush">
-                    {% if testes_do_professor %}
-                        {% for teste in testes_do_professor %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center px-1">
-                          <small>{{ teste.titulo }}</small>
-                          <div class="d-flex gap-1">
-                            <form action="{{ url_for('turma_professor.vincular_teste_existente', id_turma=turma.id) }}" method="POST">
-                                <input type="hidden" name="id_exame" value="{{ teste.id }}">
-                                <button type="submit" class="btn btn-outline-roxo btn-sm">Vincular</button>
-                            </form>
+              <div class="col-md-5 border-end p-3">
+                <h6 class="text-roxo fw-bold mb-3">Meus Testes Disponíveis</h6>
+                <p class="small text-muted">Testes que você criou e pode trazer para cá.</p>
+                
+                <div class="border rounded bg-light p-2" style="max-height: 300px; overflow-y: auto;">
+                  {% if testes_disponiveis %}
+                    <ul class="list-group list-group-flush small">
+                      {% for teste in testes_disponiveis %}
+                      <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                        <div>
+                          <strong>{{ teste.titulo }}</strong>
+                          {% if teste.nome_turma_atual %}
+                            <br><span class="text-muted fst-italic" style="font-size: 0.75rem;">Atualmente na turma: {{ teste.nome_turma_atual }}</span>
+                          {% else %}
+                            <br><span class="text-success" style="font-size: 0.75rem;">Sem turma (Livre)</span>
+                          {% endif %}
+                        </div>
+                        <form action="{{ url_for('turma_professor.vincular_teste_existente', id_turma=turma.id) }}" method="POST">
+                          <input type="hidden" name="id_exame" value="{{ teste.id }}">
+                          <button type="submit" class="btn btn-sm btn-outline-roxo" title="Vincular a esta turma">
+                            <i class="bi bi-plus-lg"></i> Adicionar
+                          </button>
+                        </form>
+                      </li>
+                      {% endfor %}
+                    </ul>
+                  {% else %}
+                    <div class="text-center text-muted py-4">
+                      <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                      Nenhum teste disponível para vincular.
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
 
-                            <form action="{{ url_for('turma_professor.desvincular_teste', id_turma=turma.id) }}" method="POST" onsubmit="return confirm('Deseja realmente remover este teste da turma?')">
-                              <input type="hidden" name="id_exame" value="{{ teste.id }}">
-                              <button type="submit" class="btn btn-outline-danger btn-sm py-0" style="font-size: 0.7rem;">
-                                <i class="bi bi-trash"></i>
-                              </button>
-                            </form>
-                            <form action="{{ url_for('turma_professor.excluir_teste_permanente', id_exame=teste.id, id_turma=turma.id) }}" 
-                                  method="POST" 
-                                  onsubmit="return confirm('ATENÇÃO: Isso apagará o teste permanentemente para TODOS os alunos e professores. Confirmar?')">
-                                <button type="submit" class="btn btn-danger btn-sm py-0" style="font-size: 0.7rem;">
-                                    Excluir Permanente
-                                </button>
-                            </form>
-                          </div>
-                        </li>
-                        {% endfor %}
+              <div class="col-md-4 p-3 bg-white">
+                <h6 class="text-success fw-bold mb-3"><i class="bi bi-check-circle"></i> Testes Ativos na Turma</h6>
+                <div class="border rounded p-2" style="max-height: 300px; overflow-y: auto;">
+                  <ul class="list-group list-group-flush">
+                    {% if testes_da_turma %}
+                      {% for teste in testes_da_turma %}
+                      <li class="list-group-item d-flex justify-content-between align-items-center px-2">
+                        <span class="small fw-bold text-dark">{{ teste.titulo }}</span>
+                        <div class="d-flex gap-1">
+                          <form action="{{ url_for('turma_professor.desvincular_teste', id_turma=turma.id) }}" method="POST">
+                            <input type="hidden" name="id_exame" value="{{ teste.id }}">
+                            <button type="submit" class="btn btn-warning btn-sm py-0" style="font-size: 0.7rem;" title="Remover da turma">
+                              <i class="bi bi-box-arrow-right"></i>
+                            </button>
+                          </form>
+                          <form action="{{ url_for('turma_professor.excluir_teste_permanente', id_exame=teste.id, id_turma=turma.id) }}" method="POST" onsubmit="return confirm('ATENÇÃO: Isso apagará o teste e todas as notas associadas permanentemente. Confirmar?')">
+                            <button type="submit" class="btn btn-danger btn-sm py-0" style="font-size: 0.7rem;" title="Excluir Permanentemente">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </form>
+                        </div>
+                      </li>
+                      {% endfor %}
                     {% else %}
-                      <li class="list-group-item text-center text-muted small py-3">Nenhum teste encontrado.</li>
+                      <li class="list-group-item text-center text-muted small py-3">Nenhum teste vinculado.</li>
                     {% endif %}
                   </ul>
                 </div>
               </div>
+
             </div>
           </div>
         </div>

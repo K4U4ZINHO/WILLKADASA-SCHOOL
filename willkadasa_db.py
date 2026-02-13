@@ -3,31 +3,25 @@ import sqlite3
 import psycopg2
 import psycopg2.extras
 
-# Configuração do caminho para o SQLite (local)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "willkadasa.db")
 
 def get_db():
-    """Retorna uma conexão com PostgreSQL (se DATABASE_URL existir) ou SQLite."""
     db_url = os.environ.get("DATABASE_URL")
     if db_url:
-        # Conexão PostgreSQL (Render)
         return psycopg2.connect(db_url, sslmode='require')
     else:
-        # Conexão SQLite (Local)
         conn = sqlite3.connect(DB_PATH, timeout=10, check_same_thread=False)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON")
         return conn
 
 def db_query(sql, params=(), one=False):
-    """Executa uma consulta e retorna os resultados."""
     conn = get_db()
     if isinstance(conn, sqlite3.Connection):
         cur = conn.execute(sql, params)
         result = cur.fetchone() if one else cur.fetchall()
     else:
-        # No Postgres, usamos DictCursor para poder acessar por nome de coluna: row['nome']
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute(sql.replace("?", "%s"), params)
         result = cur.fetchone() if one else cur.fetchall()
@@ -37,7 +31,6 @@ def db_query(sql, params=(), one=False):
     return result
 
 def db_execute(sql, params=()):
-    """Executa um comando (INSERT, UPDATE, DELETE) sem retornar nada."""
     conn = get_db()
     if isinstance(conn, sqlite3.Connection):
         conn.execute(sql, params)
@@ -50,10 +43,9 @@ def db_execute(sql, params=()):
     conn.close()
 
 def inicializar_banco():
-    """Cria todas as tabelas necessárias no banco de dados."""
     conn = get_db()
     
-    # Schema principal (Escrito em sintaxe PostgreSQL)
+    # Schema mestre com as novas colunas incluídas
     schema_sql = """
         CREATE TABLE IF NOT EXISTS email (
             id SERIAL PRIMARY KEY,
@@ -67,7 +59,11 @@ def inicializar_banco():
             id SERIAL PRIMARY KEY,
             enunciado TEXT NOT NULL,
             tipo TEXT,
-            resposta_correta TEXT
+            resposta_correta TEXT,
+            opcao_a TEXT,
+            opcao_b TEXT,
+            opcao_c TEXT,
+            opcao_d TEXT
         );
 
         CREATE TABLE IF NOT EXISTS disciplinas (
@@ -138,17 +134,48 @@ def inicializar_banco():
     """
 
     if isinstance(conn, sqlite3.Connection):
-        # Converte sintaxe Postgres para SQLite em tempo real
-        conn.executescript(
-            schema_sql.replace("SERIAL", "INTEGER PRIMARY KEY AUTOINCREMENT").replace("REAL", "FLOAT")
-        )
+        # --- LÓGICA LOCAL (SQLite) ---
+        # Tenta adicionar colunas individualmente para não quebrar bancos existentes
+        colunas_questoes = ["opcao_a", "opcao_b", "opcao_c", "opcao_d"]
+        for col in colunas_questoes:
+            try:
+                conn.execute(f"ALTER TABLE questoes ADD COLUMN {col} TEXT")
+            except sqlite3.OperationalError:
+                pass 
+
+        try:
+            conn.execute("ALTER TABLE exames ADD COLUMN turma_id INTEGER REFERENCES turmas(id) ON DELETE SET NULL")
+        except sqlite3.OperationalError:
+            pass 
+
+        conn.commit()
+        
+        # Sincroniza o resto do schema
+        sql_formatado = schema_sql.replace("SERIAL PRIMARY KEY", "INTEGER PRIMARY KEY AUTOINCREMENT")
+        sql_formatado = sql_formatado.replace("REAL", "FLOAT")
+        conn.executescript(sql_formatado)
         conn.commit()
     else:
-        # Executa no Postgres
+        # --- LÓGICA PRODUÇÃO (PostgreSQL) ---
         cur = conn.cursor()
+        migracoes = [
+            "ALTER TABLE exames ADD COLUMN IF NOT EXISTS turma_id INTEGER REFERENCES turmas(id) ON DELETE SET NULL",
+            "ALTER TABLE questoes ADD COLUMN IF NOT EXISTS opcao_a TEXT",
+            "ALTER TABLE questoes ADD COLUMN IF NOT EXISTS opcao_b TEXT",
+            "ALTER TABLE questoes ADD COLUMN IF NOT EXISTS opcao_c TEXT",
+            "ALTER TABLE questoes ADD COLUMN IF NOT EXISTS opcao_d TEXT"
+        ]
+        
+        for sql in migracoes:
+            try:
+                cur.execute(sql)
+                conn.commit()
+            except Exception:
+                conn.rollback()
+
         cur.execute(schema_sql)
         conn.commit()
         cur.close()
     
     conn.close()
-    print(" Banco de Dados (Híbrido) sincronizado!")
+    print("Banco de Dados (Híbrido) sincronizado com colunas de alternativas!")
